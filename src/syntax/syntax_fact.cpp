@@ -1,7 +1,7 @@
 #include "syntax_fact.hpp"
 
 namespace simple_compiler {
-int SyntaxFact::GetUnaryOperatorPrecedence(SyntaxKind kind){
+int SyntaxFact::GetUnaryOperatorPrecedence(SyntaxKind kind) {
   switch (kind) {
     case SyntaxKind::PlusToken:
     case SyntaxKind::MinusToken:
@@ -12,11 +12,12 @@ int SyntaxFact::GetUnaryOperatorPrecedence(SyntaxKind kind){
 }
 int SyntaxFact::GetBinaryOperatorPrecedence(SyntaxKind kind) {
   switch (kind) {
-    case SyntaxKind::PlusToken:
-    case SyntaxKind::MinusToken:
-      return 2;
     case SyntaxKind::StartToken:
     case SyntaxKind::SlashToken:
+      return 2;
+
+    case SyntaxKind::PlusToken:
+    case SyntaxKind::MinusToken:
       return 1;
     default:
       return 0;

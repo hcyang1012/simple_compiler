@@ -3,22 +3,23 @@
 #include <vector>
 
 #include "syntax/syntax_node.hpp"
+#include "syntax/value_type.hpp"
 
 namespace simple_compiler {
 class Evaluator {
  public:
   Evaluator(const std::shared_ptr<const ExpressionSyntax>& root);
-  int Evaluate() const;
+  Value Evaluate() const;
 
  private:
   const std::shared_ptr<const ExpressionSyntax> root_;
-  int evaluate_expression(const std::shared_ptr<const ExpressionSyntax>& node) const;
-  int evaluate_unary_expression(const std::shared_ptr<const UnaryExpressionSyntax>& node) const;
-  int evaluate_binary_expression(
+  Value evaluate_expression(const std::shared_ptr<const ExpressionSyntax>& node) const;
+  Value evaluate_unary_expression(const std::shared_ptr<const UnaryExpressionSyntax>& node) const;
+  Value evaluate_binary_expression(
       const std::shared_ptr<const BinaryExpressionSyntax>& node) const;
-  int evaluate_number_expression(
+  Value evaluate_number_expression(
       const std::shared_ptr<const NumberExpressionSyntax>& node) const;
-  int evaluate_parenthesis_expression(
+  Value evaluate_parenthesis_expression(
       const std::shared_ptr<const ParenthesizedExpressionSyntax>& node) const;
   std::vector<std::string> diagnostics_;
 };

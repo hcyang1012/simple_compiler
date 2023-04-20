@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     }
 
     auto evaluator = simple_compiler::Evaluator(tree->Root());
-    std::cout << evaluator.Evaluate() << std::endl;
+    std::cout << evaluator.Evaluate().ToString() << std::endl;
   }
   return 0;
 }
