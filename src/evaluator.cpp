@@ -1,8 +1,8 @@
 #include "evaluator.hpp"
 
-#include <exception>
+#include <stdexcept>
 
-#include "parser.hpp"
+#include "syntax/parser.hpp"
 
 namespace simple_compiler {
 Evaluator::Evaluator(const std::shared_ptr<const ExpressionSyntax>& root)

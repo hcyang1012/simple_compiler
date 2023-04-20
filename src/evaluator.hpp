@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 
-#include "syntax_node.hpp"
+#include "syntax/syntax_node.hpp"
 
 namespace simple_compiler {
 class Evaluator {

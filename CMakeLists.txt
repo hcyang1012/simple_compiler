@@ -9,12 +9,12 @@ set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set(SOURCES
   ${SRC_DIR}/main.cpp
   ${SRC_DIR}/io.cpp
-  ${SRC_DIR}/syntax_kind.cpp
-  ${SRC_DIR}/syntax_token.cpp
-  ${SRC_DIR}/lexer.cpp
-  ${SRC_DIR}/parser.cpp
-  ${SRC_DIR}/syntax_node.cpp
-  ${SRC_DIR}/syntax_tree.cpp
+  ${SRC_DIR}/syntax/syntax_kind.cpp
+  ${SRC_DIR}/syntax/syntax_token.cpp
+  ${SRC_DIR}/syntax/lexer.cpp
+  ${SRC_DIR}/syntax/parser.cpp
+  ${SRC_DIR}/syntax/syntax_node.cpp
+  ${SRC_DIR}/syntax/syntax_tree.cpp
   ${SRC_DIR}/evaluator.cpp
 )
 

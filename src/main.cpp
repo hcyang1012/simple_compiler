@@ -2,9 +2,9 @@
 #include <string>
 
 #include "evaluator.hpp"
-#include "parser.hpp"
-#include "syntax_node.hpp"
-#include "syntax_tree.hpp"
+#include "syntax/parser.hpp"
+#include "syntax/syntax_node.hpp"
+#include "syntax/syntax_tree.hpp"
 
 void PrettyPrint(const simple_compiler::SyntaxNode& node,
                  const std::string& indent, bool is_last = true);
