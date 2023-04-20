@@ -54,11 +54,11 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
                                          "-");
   }
   if (current_char() == '*') {
-    return std::make_shared<SyntaxToken>(SyntaxKind::MulplicationToken,
+    return std::make_shared<SyntaxToken>(SyntaxKind::StartToken,
                                          position_++, "*");
   }
   if (current_char() == '/') {
-    return std::make_shared<SyntaxToken>(SyntaxKind::DivisionToken, position_++,
+    return std::make_shared<SyntaxToken>(SyntaxKind::SlashToken, position_++,
                                          "/");
   }
   if (current_char() == '(') {
@@ -72,7 +72,7 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
 
   diagnostics_.emplace_back("Lexer ERROR: bad character at position " +
                             std::to_string(position_));
-  auto prev_position = position_++;                          
+  auto prev_position = position_++;
   return std::make_shared<SyntaxToken>(SyntaxKind::BadToken, prev_position,
                                        text_.substr(position_ - 1, 1));
 }

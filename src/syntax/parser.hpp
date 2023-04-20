@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "syntax_token.hpp"
 #include "syntax_node.hpp"
+#include "syntax_token.hpp"
 #include "syntax_tree.hpp"
 
 namespace simple_compiler {
@@ -15,7 +15,8 @@ class Parser {
   const std::vector<std::string>& Diagnostics() const;
 
  private:
-  std::shared_ptr<const ExpressionSyntax> parse_expression();
+  std::shared_ptr<const ExpressionSyntax> parse_expression(
+      const int parent_precedence = 0);
   std::shared_ptr<const ExpressionSyntax> parse_primary_expression();
   std::shared_ptr<const ExpressionSyntax> parse_term();
   std::shared_ptr<const ExpressionSyntax> parse_factor();

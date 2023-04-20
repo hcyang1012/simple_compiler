@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "lexer.hpp"
+#include "syntax_fact.hpp"
 #include "syntax_node.hpp"
 
 namespace simple_compiler {
@@ -55,15 +56,15 @@ std::shared_ptr<const SyntaxToken> Parser::match(const SyntaxKind kind) {
 }
 
 std::shared_ptr<const SyntaxTree> Parser::Parse() {
-  auto expression = parse_term();
+  auto expression = parse_expression();
   auto eofToken = match(SyntaxKind::EndOfFileToken);
   return std::make_shared<const SyntaxTree>(expression, diagnostics_, eofToken);
 }
 std::shared_ptr<const ExpressionSyntax> Parser::parse_factor() {
   auto left = parse_primary_expression();
 
-  while (current()->Kind() == SyntaxKind::MulplicationToken ||
-         current()->Kind() == SyntaxKind::DivisionToken) {
+  while (current()->Kind() == SyntaxKind::StartToken ||
+         current()->Kind() == SyntaxKind::SlashToken) {
     auto op = std::make_shared<const OperatorSyntax>(next_token());
     auto right = parse_primary_expression();
     left = std::make_shared<const BinaryExpressionSyntax>(left, op, right);
@@ -82,8 +83,32 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_term() {
   return left;
 }
 
-std::shared_ptr<const ExpressionSyntax> Parser::parse_expression() {
-  return parse_term();
+std::shared_ptr<const ExpressionSyntax> Parser::parse_expression(
+    const int parent_precedence) {
+  std::shared_ptr<const simple_compiler::ExpressionSyntax> left;
+
+  auto unary_precedence =
+      SyntaxFact::GetUnaryOperatorPrecedence(current()->Kind());
+  if (unary_precedence != 0 && unary_precedence >= parent_precedence) {
+    auto op = std::make_shared<OperatorSyntax>(next_token());
+    auto operand = parse_expression(unary_precedence);
+    left =
+        std::make_shared<const UnaryExpressionSyntax>(op, operand);
+  } else {
+    left = parse_primary_expression();
+  }
+
+  while (true) {
+    auto precedence =
+        SyntaxFact::GetBinaryOperatorPrecedence(current()->Kind());
+    if (precedence == 0 || precedence <= parent_precedence) {
+      break;
+    }
+    auto op = std::make_shared<const OperatorSyntax>(next_token());
+    auto right = parse_expression(precedence);
+    left = std::make_shared<const BinaryExpressionSyntax>(left, op, right);
+  }
+  return left;
 }
 
 std::shared_ptr<const ExpressionSyntax> Parser::parse_primary_expression() {

@@ -13,11 +13,11 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::MinusToken) {
     return "MinusToken";
   }
-  if (kind == SyntaxKind::MulplicationToken) {
-    return "MulplicationToken";
+  if (kind == SyntaxKind::StartToken) {
+    return "StartToken";
   }
-  if (kind == SyntaxKind::DivisionToken) {
-    return "DivisionToken";
+  if (kind == SyntaxKind::SlashToken) {
+    return "SlashToken";
   }
   if (kind == SyntaxKind::OpenParenthesisToken) {
     return "OpenParenthesisToken";
@@ -42,6 +42,9 @@ std::string ToString(SyntaxKind kind) {
   }
   if(kind == SyntaxKind::ParenthesisExpression){
     return "ParenthesisExpression";
+  }
+  if(kind == SyntaxKind::UnaryExpression){
+    return "UnaryExpression";
   }
   return "BadToken";
 }

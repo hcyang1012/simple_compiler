@@ -3,18 +3,19 @@
 
 namespace simple_compiler {
 enum SyntaxKind {
+  BadToken,
+  EndOfFileToken,
   NumberToken,
   WhiteSpaceToken,
   PlusToken,
   MinusToken,
-  MulplicationToken,
-  DivisionToken,
+  StartToken,
+  SlashToken,
   OpenParenthesisToken,
   CloseParenthesisToken,
-  BadToken,
-  EndOfFileToken,
 
   NumberExpression,
+  UnaryExpression,
   BinaryExpression,
   OpenParenthesisExpression,
   CloseParenthesisExpression,

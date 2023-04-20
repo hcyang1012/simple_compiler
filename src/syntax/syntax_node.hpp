@@ -59,6 +59,20 @@ class BinaryExpressionSyntax : public ExpressionSyntax {
   const std::shared_ptr<const ExpressionSyntax> right_;
 };
 
+class UnaryExpressionSyntax : public ExpressionSyntax {
+ public:
+  UnaryExpressionSyntax(const std::shared_ptr<const OperatorSyntax> op,
+                         const std::shared_ptr<const ExpressionSyntax> operand);
+  std::shared_ptr<const OperatorSyntax> Operator() const;
+  std::shared_ptr<const ExpressionSyntax> Operand() const;
+  SyntaxKind Kind() const override;
+  std::vector<std::shared_ptr<const SyntaxNode>> GetChildren() const override;
+
+ private:
+  const std::shared_ptr<const OperatorSyntax> operator_;
+  const std::shared_ptr<const ExpressionSyntax> operand_;
+};
+
 class OpenParenthesisSyntax : public SyntaxNode {
  public:
   OpenParenthesisSyntax(const std::shared_ptr<const SyntaxToken> open_parenthesis_token);
