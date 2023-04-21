@@ -9,12 +9,22 @@ set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set(SOURCES
   ${SRC_DIR}/main.cpp
   ${SRC_DIR}/io.cpp
-  ${SRC_DIR}/syntax_kind.cpp
-  ${SRC_DIR}/syntax_token.cpp
-  ${SRC_DIR}/lexer.cpp
-  ${SRC_DIR}/parser.cpp
-  ${SRC_DIR}/syntax_node.cpp
-  ${SRC_DIR}/syntax_tree.cpp
+  ${SRC_DIR}/syntax/syntax_kind.cpp
+  ${SRC_DIR}/syntax/syntax_token.cpp
+  ${SRC_DIR}/syntax/lexer.cpp
+  ${SRC_DIR}/syntax/parser.cpp
+  ${SRC_DIR}/syntax/syntax_node.cpp
+  ${SRC_DIR}/syntax/syntax_tree.cpp
+  ${SRC_DIR}/syntax/syntax_fact.cpp
+  ${SRC_DIR}/syntax/value_type.cpp
+
+  ${SRC_DIR}/binding/bind_node.cpp
+  ${SRC_DIR}/binding/binder.cpp
+  ${SRC_DIR}/binding/bound_literal_expression.cpp
+  ${SRC_DIR}/binding/bound_binary_expression.cpp
+  ${SRC_DIR}/binding/bound_unary_expression.cpp
+  ${SRC_DIR}/binding/bound_unary_operator.cpp
+  ${SRC_DIR}/binding/bound_binary_operator.cpp
   ${SRC_DIR}/evaluator.cpp
 )
 

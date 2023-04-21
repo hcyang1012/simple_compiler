@@ -9,19 +9,19 @@ std::vector<std::shared_ptr<const SyntaxNode>> SyntaxNode::GetChildren() const {
   return {};
 }
 
-NumberExpressionSyntax::NumberExpressionSyntax(
-    const std::shared_ptr<const SyntaxToken> number_token)
-    : number_token_(number_token) {}
+LiteralExpressionSyntax::LiteralExpressionSyntax(
+    const std::shared_ptr<const SyntaxToken> literal_token, const Value value)
+    : literal_token_(literal_token), value_(value) {}
 
-std::shared_ptr<const SyntaxToken> NumberExpressionSyntax::NumberToken() const {
-  return number_token_;
+std::shared_ptr<const SyntaxToken> LiteralExpressionSyntax::LiteralToken() const {
+  return literal_token_;
 }
-SyntaxKind NumberExpressionSyntax::Kind() const {
-  return SyntaxKind::NumberExpression;
+SyntaxKind LiteralExpressionSyntax::Kind() const {
+  return SyntaxKind::LiteralExpression;
 }
 
-std::string NumberExpressionSyntax::ValueText() const {
-  return number_token_->Text();
+std::string LiteralExpressionSyntax::ValueText() const {
+  return literal_token_->Text();
 }
 
 OperatorSyntax::OperatorSyntax(
@@ -135,6 +135,31 @@ ParenthesizedExpressionSyntax::GetChildren() const {
   children.push_back(open_parenthesis_);
   children.push_back(expression_);
   children.push_back(close_parenthesis_);
+  return children;
+}
+
+UnaryExpressionSyntax::UnaryExpressionSyntax(
+    const std::shared_ptr<const OperatorSyntax> op,
+    const std::shared_ptr<const ExpressionSyntax> operand)
+    : operator_(op), operand_(operand) {}
+
+std::shared_ptr<const OperatorSyntax> UnaryExpressionSyntax::Operator() const {
+  return operator_;
+}
+
+std::shared_ptr<const ExpressionSyntax> UnaryExpressionSyntax::Operand() const {
+  return operand_;
+}
+
+SyntaxKind UnaryExpressionSyntax::Kind() const {
+  return SyntaxKind::UnaryExpression;
+}
+
+std::vector<std::shared_ptr<const SyntaxNode>>
+UnaryExpressionSyntax::GetChildren() const {
+  std::vector<std::shared_ptr<const SyntaxNode>> children;
+  children.push_back(operator_);
+  children.push_back(operand_);
   return children;
 }
 

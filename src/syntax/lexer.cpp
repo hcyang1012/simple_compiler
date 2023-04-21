@@ -1,6 +1,8 @@
 #include "lexer.hpp"
 
 #include <memory>
+
+#include "syntax_fact.hpp"
 namespace simple_compiler {
 Lexer::Lexer(const std::string& text) : text_(text), position_(0) {}
 
@@ -45,6 +47,17 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
                                          text);
   }
 
+  if (std::isalpha(current_char())) {
+    size_t start = position_;
+    while (std::isalpha(current_char())) {
+      next();
+    }
+    size_t length = position_ - start;
+    std::string text = text_.substr(start, length);
+    auto kind = SyntaxFact::GetKeywordKind(text);
+    return std::make_shared<SyntaxToken>(kind, start, text);
+  }
+
   if (current_char() == '+') {
     return std::make_shared<SyntaxToken>(SyntaxKind::PlusToken, position_++,
                                          "+");
@@ -54,11 +67,11 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
                                          "-");
   }
   if (current_char() == '*') {
-    return std::make_shared<SyntaxToken>(SyntaxKind::MulplicationToken,
-                                         position_++, "*");
+    return std::make_shared<SyntaxToken>(SyntaxKind::StarToken, position_++,
+                                         "*");
   }
   if (current_char() == '/') {
-    return std::make_shared<SyntaxToken>(SyntaxKind::DivisionToken, position_++,
+    return std::make_shared<SyntaxToken>(SyntaxKind::SlashToken, position_++,
                                          "/");
   }
   if (current_char() == '(') {
@@ -70,17 +83,51 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
                                          position_++, ")");
   }
 
+  if (current_char() == '!') {
+    if(lookahead() == '='){
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::BangEqualsToken,
+                                           position_ - 2, "!=");
+    }
+    return std::make_shared<SyntaxToken>(SyntaxKind::BangToken, position_++,
+                                         "!");
+  }
+  if (current_char() == '&') {
+    if (lookahead() == '&') {
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::AmpersandAmpersandToken,
+                                           position_ - 2, "&&");
+    }
+  }
+  if (current_char() == '|') {
+    if (lookahead() == '|') {
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::PipePipeToken,
+                                           position_ - 2, "||");
+    }
+  }
+
+  if(current_char() == '='){
+    if(lookahead() == '='){
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::EqualsEqualsToken,
+                                           position_ - 2, "==");
+    }
+  }
   diagnostics_.emplace_back("Lexer ERROR: bad character at position " +
                             std::to_string(position_));
-  auto prev_position = position_++;                          
+  auto prev_position = position_++;
   return std::make_shared<SyntaxToken>(SyntaxKind::BadToken, prev_position,
                                        text_.substr(position_ - 1, 1));
 }
-char Lexer::current_char() const {
-  if (position_ >= text_.length()) {
+char Lexer::current_char() const { return peek(0); }
+char Lexer::lookahead() const { return peek(1); }
+char Lexer::peek(const size_t offset) const {
+  size_t position = position_ + offset;
+  if (position >= text_.length()) {
     return '\0';
   }
-  return text_[position_];
+  return text_[position];
 }
 void Lexer::next() {
   position_++;
