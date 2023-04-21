@@ -4,7 +4,10 @@
 #include <vector>
 
 #include "../syntax/syntax_node.hpp"
-#include "bind_node.hpp"
+#include "binding/bind_node.hpp"
+#include "binding/bound_binary_expression.hpp"
+#include "binding/bound_literal_expression.hpp"
+#include "binding/bound_unary_expression.hpp"
 namespace simple_compiler {
 class Binder {
  public:

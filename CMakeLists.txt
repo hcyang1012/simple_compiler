@@ -20,6 +20,11 @@ set(SOURCES
 
   ${SRC_DIR}/binding/bind_node.cpp
   ${SRC_DIR}/binding/binder.cpp
+  ${SRC_DIR}/binding/bound_literal_expression.cpp
+  ${SRC_DIR}/binding/bound_binary_expression.cpp
+  ${SRC_DIR}/binding/bound_unary_expression.cpp
+  ${SRC_DIR}/binding/bound_unary_operator.cpp
+  ${SRC_DIR}/binding/bound_binary_operator.cpp
   ${SRC_DIR}/evaluator.cpp
 )
 

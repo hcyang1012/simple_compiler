@@ -2,6 +2,11 @@
 
 #include <stdexcept>
 
+#include "bound_binary_expression.hpp"
+#include "bound_literal_expression.hpp"
+#include "bound_unary_expression.hpp"
+#include "bound_unary_operator.hpp"
+
 namespace simple_compiler {
 std::shared_ptr<BoundExpressionNode> Binder::BindExpression(
     const std::shared_ptr<const ExpressionSyntax> syntax) {
@@ -42,9 +47,8 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_binary_expression(
     const std::shared_ptr<const BinaryExpressionSyntax> syntax) {
   auto bound_left = BindExpression(syntax->Left());
   auto bound_right = BindExpression(syntax->Right());
-  auto bound_operator =
-      bind_binary_operator_kind(syntax->Operator()->OperatorToken()->Kind(),
-                                bound_left->Type(), bound_right->Type());
+  auto bound_operator = BoundBinaryOperatorNode::Bind(
+      syntax->Operator()->Kind(), bound_left->Type(), bound_right->Type());
   if (bound_operator == nullptr) {
     diagnostics_.push_back(
         "Binary operator '" + syntax->Operator()->ValueText() +
@@ -59,10 +63,9 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_binary_expression(
 std::shared_ptr<BoundExpressionNode> Binder::bind_unary_expression(
     const std::shared_ptr<const UnaryExpressionSyntax> syntax) {
   auto bound_operand = BindExpression(syntax->Operand());
-  auto bound_operator = bind_unary_operator_kind(syntax->Operator()->Kind(),
-                                                 bound_operand->Type());
-  if (bound_operand->Type() != ValueType::Int &&
-      bound_operand->Type() != ValueType::Boolean) {
+  auto bound_operator = BoundUnaryOperatorNode::Bind(syntax->Operator()->Kind(),
+                                                     bound_operand->Type());
+  if (bound_operator == nullptr) {
     diagnostics_.push_back(
         "Unary operator '" + syntax->Operator()->ValueText() +
         "' is not defined for type '" + ToString(bound_operand->Type()) + "'.");
