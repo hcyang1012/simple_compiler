@@ -63,7 +63,7 @@ std::shared_ptr<const SyntaxTree> Parser::Parse() {
 std::shared_ptr<const ExpressionSyntax> Parser::parse_factor() {
   auto left = parse_primary_expression();
 
-  while (current()->Kind() == SyntaxKind::StartToken ||
+  while (current()->Kind() == SyntaxKind::StarToken ||
          current()->Kind() == SyntaxKind::SlashToken) {
     auto op = std::make_shared<const OperatorSyntax>(next_token());
     auto right = parse_primary_expression();
@@ -121,7 +121,7 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_primary_expression() {
         left, expression, right);
   }
   auto number_token = match(SyntaxKind::NumberToken);
-  return std::make_shared<const NumberExpressionSyntax>(number_token);
+  return std::make_shared<const LiteralExpressionSyntax>(number_token);
 }
 
 std::shared_ptr<const SyntaxToken> Parser::peek(const size_t offset) const {

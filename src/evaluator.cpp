@@ -6,7 +6,7 @@
 #include "syntax/value_type.hpp"
 
 namespace simple_compiler {
-Evaluator::Evaluator(const std::shared_ptr<const ExpressionSyntax>& root)
+Evaluator::Evaluator(const std::shared_ptr<const BoundExpressionNode>& root)
     : root_(root), diagnostics_() {}
 
 Value Evaluator::Evaluate() const {
@@ -17,29 +17,26 @@ Value Evaluator::Evaluate() const {
 }
 
 Value Evaluator::evaluate_expression(
-    const std::shared_ptr<const ExpressionSyntax>& node) const {
+    const std::shared_ptr<const BoundExpressionNode>& node) const {
   switch (node->Kind()) {
-    case SyntaxKind::UnaryExpression:
+    case BoundNodeKind::BoundUnaryExpression:
       return evaluate_unary_expression(
-          std::static_pointer_cast<const UnaryExpressionSyntax>(node));
-    case SyntaxKind::BinaryExpression:
+          std::static_pointer_cast<const BoundUnaryExpressionNode>(node));
+    case BoundNodeKind::BoundBinaryExpression:
       return evaluate_binary_expression(
-          std::static_pointer_cast<const BinaryExpressionSyntax>(node));
-    case SyntaxKind::NumberExpression:
+          std::static_pointer_cast<const BoundBinaryExpressionNode>(node));
+    case BoundNodeKind::BoundLiteralExpression:
       return evaluate_number_expression(
-          std::static_pointer_cast<const NumberExpressionSyntax>(node));
-    case SyntaxKind::ParenthesisExpression:
-      return evaluate_parenthesis_expression(
-          std::static_pointer_cast<const ParenthesizedExpressionSyntax>(node));
+          std::static_pointer_cast<const BoundLiteralExpressionNode>(node));
   }
 
-  throw std::runtime_error("Unexpected expression: " + node->ValueText());
+  throw std::runtime_error("Unexpected expression: " + node->Kind());
 }
 
 Value Evaluator::evaluate_unary_expression(
-    const std::shared_ptr<const UnaryExpressionSyntax>& node) const {
+    const std::shared_ptr<const BoundUnaryExpressionNode>& node) const {
   auto operand = evaluate_expression(node->Operand());
-  if (node->Operator()->Kind() == SyntaxKind::MinusToken) {
+  if (node->OperatorKind() == BoundUnaryOperatorKind::Negation) {
     return Value(-operand.AsInt());
   } else {
     return operand;
@@ -47,37 +44,29 @@ Value Evaluator::evaluate_unary_expression(
 }
 
 Value Evaluator::evaluate_number_expression(
-    const std::shared_ptr<const NumberExpressionSyntax>& node) const {
-  try{
-    return Value(std::stoi(node->ValueText()));
-  }catch(const std::exception& ex){
-    throw std::runtime_error("Unexpected number: " + node->ValueText());
-  }
+    const std::shared_ptr<const BoundLiteralExpressionNode>& node) const {
+  return node->Value();
 }
 
 Value Evaluator::evaluate_binary_expression(
-    const std::shared_ptr<const BinaryExpressionSyntax>& node) const {
+    const std::shared_ptr<const BoundBinaryExpressionNode>& node) const {
   auto left = evaluate_expression(node->Left());
   auto right = evaluate_expression(node->Right());
 
-  switch (node->Operator()->Kind()) {
-    case SyntaxKind::PlusToken:
+  switch (node->OperatorKind()) {
+    case BoundBinaryOperatorKind::Addition:
       return Value(left.AsInt() + right.AsInt());
-    case SyntaxKind::MinusToken:
+    case BoundBinaryOperatorKind::Subtraction:
       return Value(left.AsInt() - right.AsInt());
-    case SyntaxKind::StartToken:
+    case BoundBinaryOperatorKind::Multiplication:
       return Value(left.AsInt() * right.AsInt());
-    case SyntaxKind::SlashToken:
+    case BoundBinaryOperatorKind::Division:
       return Value(left.AsInt() / right.AsInt());
   }
 
   throw std::runtime_error("Unexpected binary operator: " +
-                           node->Operator()->ValueText());
+                           node->OperatorKind());
   return Value(0);
 }
 
-Value Evaluator::evaluate_parenthesis_expression(
-    const std::shared_ptr<const ParenthesizedExpressionSyntax>& node) const {
-  return evaluate_expression(node->Expression());
-}
 };  // namespace simple_compiler

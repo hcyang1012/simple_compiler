@@ -13,8 +13,8 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::MinusToken) {
     return "MinusToken";
   }
-  if (kind == SyntaxKind::StartToken) {
-    return "StartToken";
+  if (kind == SyntaxKind::StarToken) {
+    return "StarToken";
   }
   if (kind == SyntaxKind::SlashToken) {
     return "SlashToken";
@@ -28,8 +28,8 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::EndOfFileToken) {
     return "EndOfFileToken";
   }
-  if(kind == SyntaxKind::NumberExpression){
-    return "NumberExpression";
+  if(kind == SyntaxKind::LiteralExpression){
+    return "LiteralExpression";
   }
   if(kind == SyntaxKind::BinaryExpression){
     return "BinaryExpression";

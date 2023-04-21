@@ -17,6 +17,9 @@ set(SOURCES
   ${SRC_DIR}/syntax/syntax_tree.cpp
   ${SRC_DIR}/syntax/syntax_fact.cpp
   ${SRC_DIR}/syntax/value_type.cpp
+
+  ${SRC_DIR}/binding/bind_node.cpp
+  ${SRC_DIR}/binding/binder.cpp
   ${SRC_DIR}/evaluator.cpp
 )
 

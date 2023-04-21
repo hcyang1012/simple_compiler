@@ -54,7 +54,7 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
                                          "-");
   }
   if (current_char() == '*') {
-    return std::make_shared<SyntaxToken>(SyntaxKind::StartToken,
+    return std::make_shared<SyntaxToken>(SyntaxKind::StarToken,
                                          position_++, "*");
   }
   if (current_char() == '/') {

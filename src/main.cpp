@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "binding/binder.hpp"
 #include "evaluator.hpp"
 #include "syntax/parser.hpp"
 #include "syntax/syntax_node.hpp"
@@ -21,13 +22,17 @@ int main(int argc, char** argv) {
 
     PrettyPrint(*(tree->Root()), "");
 
-    if (tree->Diagnostics().size() > 0) {
-      for (const auto& diag : tree->Diagnostics()) {
-        std::cout << diag << std::endl;
-      }
+    auto binder = simple_compiler::Binder();
+    auto bound_tree = binder.BindExpression(tree->Root());
+
+    auto diagnostics = tree->Diagnostics();
+    diagnostics.insert(diagnostics.end(), binder.Diagnostics().begin(),
+                       binder.Diagnostics().end());
+    for (const auto& diag : diagnostics) {
+      std::cout << diag << std::endl;
     }
 
-    auto evaluator = simple_compiler::Evaluator(tree->Root());
+    auto evaluator = simple_compiler::Evaluator(bound_tree);
     std::cout << evaluator.Evaluate().ToString() << std::endl;
   }
   return 0;

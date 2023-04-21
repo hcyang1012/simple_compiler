@@ -12,7 +12,7 @@ int SyntaxFact::GetUnaryOperatorPrecedence(SyntaxKind kind) {
 }
 int SyntaxFact::GetBinaryOperatorPrecedence(SyntaxKind kind) {
   switch (kind) {
-    case SyntaxKind::StartToken:
+    case SyntaxKind::StarToken:
     case SyntaxKind::SlashToken:
       return 2;
 

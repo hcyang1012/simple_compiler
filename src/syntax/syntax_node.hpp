@@ -20,9 +20,9 @@ class SyntaxToken;
 
 class ExpressionSyntax : public SyntaxNode {};
 
-class NumberExpressionSyntax : public ExpressionSyntax {
+class LiteralExpressionSyntax : public ExpressionSyntax {
  public:
-  NumberExpressionSyntax(const std::shared_ptr<const SyntaxToken> number_token);
+  LiteralExpressionSyntax(const std::shared_ptr<const SyntaxToken> number_token);
   std::shared_ptr<const SyntaxToken> NumberToken() const;
   SyntaxKind Kind() const override;
   std::string ValueText() const override;

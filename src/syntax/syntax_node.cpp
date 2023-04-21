@@ -9,18 +9,18 @@ std::vector<std::shared_ptr<const SyntaxNode>> SyntaxNode::GetChildren() const {
   return {};
 }
 
-NumberExpressionSyntax::NumberExpressionSyntax(
+LiteralExpressionSyntax::LiteralExpressionSyntax(
     const std::shared_ptr<const SyntaxToken> number_token)
     : number_token_(number_token) {}
 
-std::shared_ptr<const SyntaxToken> NumberExpressionSyntax::NumberToken() const {
+std::shared_ptr<const SyntaxToken> LiteralExpressionSyntax::NumberToken() const {
   return number_token_;
 }
-SyntaxKind NumberExpressionSyntax::Kind() const {
-  return SyntaxKind::NumberExpression;
+SyntaxKind LiteralExpressionSyntax::Kind() const {
+  return SyntaxKind::LiteralExpression;
 }
 
-std::string NumberExpressionSyntax::ValueText() const {
+std::string LiteralExpressionSyntax::ValueText() const {
   return number_token_->Text();
 }
 
