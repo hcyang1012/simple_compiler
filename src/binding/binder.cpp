@@ -47,8 +47,7 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_binary_expression(
                                 bound_left->Type(), bound_right->Type());
   if (bound_operator == nullptr) {
     diagnostics_.push_back(
-        "Binary operator '" +
-        ToString(syntax->Operator()->OperatorToken()->Kind()) +
+        "Binary operator '" + syntax->Operator()->ValueText() +
         "' is not defined for types '" + ToString(bound_left->Type()) +
         "' and '" + ToString(bound_right->Type()) + "'.");
     return bound_left;
@@ -62,9 +61,10 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_unary_expression(
   auto bound_operand = BindExpression(syntax->Operand());
   auto bound_operator = bind_unary_operator_kind(syntax->Operator()->Kind(),
                                                  bound_operand->Type());
-  if (bound_operand->Type() != ValueType::Int) {
+  if (bound_operand->Type() != ValueType::Int &&
+      bound_operand->Type() != ValueType::Boolean) {
     diagnostics_.push_back(
-        "Unary operator '" + ToString(syntax->Operator()->Kind()) +
+        "Unary operator '" + syntax->Operator()->ValueText() +
         "' is not defined for type '" + ToString(bound_operand->Type()) + "'.");
     return bound_operand;
   }
@@ -74,10 +74,13 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_unary_expression(
 
 std::shared_ptr<BoundUnaryOperatorKind> Binder::bind_unary_operator_kind(
     const SyntaxKind kind, const ValueType type) {
-  if (type != ValueType::Int) {
-    return nullptr;
+  if (type == ValueType::Boolean) {
+    switch (kind) {
+      case SyntaxKind::BangToken:
+        return std::make_shared<BoundUnaryOperatorKind>(
+            BoundUnaryOperatorKind::LogicalNegation);
+    }
   }
-
   switch (kind) {
     case SyntaxKind::PlusToken:
       return std::make_shared<BoundUnaryOperatorKind>(
@@ -93,26 +96,38 @@ std::shared_ptr<BoundUnaryOperatorKind> Binder::bind_unary_operator_kind(
 std::shared_ptr<BoundBinaryOperatorKind> Binder::bind_binary_operator_kind(
     const SyntaxKind kind, const ValueType left_type,
     const ValueType right_type) {
-  if (left_type != ValueType::Int || right_type != ValueType::Int) {
-    return nullptr;
-  }
-  switch (kind) {
-    case SyntaxKind::PlusToken:
-      return std::make_shared<BoundBinaryOperatorKind>(
-          BoundBinaryOperatorKind::Addition);
-    case SyntaxKind::MinusToken:
-      return std::make_shared<BoundBinaryOperatorKind>(
-          BoundBinaryOperatorKind::Subtraction);
-    case SyntaxKind::StarToken:
-      return std::make_shared<BoundBinaryOperatorKind>(
-          BoundBinaryOperatorKind::Multiplication);
-    case SyntaxKind::SlashToken:
-      return std::make_shared<BoundBinaryOperatorKind>(
-          BoundBinaryOperatorKind::Division);
-    default:
+  if (left_type == ValueType::Int && right_type == ValueType::Int) {
+    switch (kind) {
+      case SyntaxKind::PlusToken:
+        return std::make_shared<BoundBinaryOperatorKind>(
+            BoundBinaryOperatorKind::Addition);
+      case SyntaxKind::MinusToken:
+        return std::make_shared<BoundBinaryOperatorKind>(
+            BoundBinaryOperatorKind::Subtraction);
+      case SyntaxKind::StarToken:
+        return std::make_shared<BoundBinaryOperatorKind>(
+            BoundBinaryOperatorKind::Multiplication);
+      case SyntaxKind::SlashToken:
+        return std::make_shared<BoundBinaryOperatorKind>(
+            BoundBinaryOperatorKind::Division);
+      default:
 
-      throw std::runtime_error("Unexpected syntax kind: " + ToString(kind));
+        throw std::runtime_error("Unexpected syntax kind: " + ToString(kind));
+    }
   }
+  if (left_type == ValueType::Boolean && right_type == ValueType::Boolean) {
+    switch (kind) {
+      case SyntaxKind::AmpersandAmpersandToken:
+        return std::make_shared<BoundBinaryOperatorKind>(
+            BoundBinaryOperatorKind::LogicalAnd);
+      case SyntaxKind::PipePipeToken:
+        return std::make_shared<BoundBinaryOperatorKind>(
+            BoundBinaryOperatorKind::LogicalOr);
+      default:
+        throw std::runtime_error("Unexpected syntax kind: " + ToString(kind));
+    }
+  }
+  return nullptr;
 }
 
 }  // namespace simple_compiler

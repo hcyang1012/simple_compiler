@@ -6,6 +6,8 @@ Value::Value(bool value): type_(ValueType::Boolean), data_({.boolean_ = value}) 
 
 int Value::AsInt() const { return data_.int_; }
 
+bool Value::AsBool() const { return data_.boolean_; }
+
 ValueType Value::Type() const { return type_; }
 
 std::string ToString(const ValueType& value) {

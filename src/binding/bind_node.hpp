@@ -34,6 +34,7 @@ class BoundLiteralExpressionNode : public BoundExpressionNode {
 enum BoundUnaryOperatorKind {
   Identity,
   Negation,
+  LogicalNegation,
 };
 
 class BoundUnaryExpressionNode : public BoundExpressionNode {
@@ -57,6 +58,8 @@ enum BoundBinaryOperatorKind {
   Subtraction,
   Multiplication,
   Division,
+  LogicalAnd,
+  LogicalOr,
 };
 
 class BoundBinaryExpressionNode : public BoundExpressionNode {

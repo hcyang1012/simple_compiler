@@ -38,9 +38,10 @@ Value Evaluator::evaluate_unary_expression(
   auto operand = evaluate_expression(node->Operand());
   if (node->OperatorKind() == BoundUnaryOperatorKind::Negation) {
     return Value(-operand.AsInt());
-  } else {
-    return operand;
+  } else if (node->OperatorKind() == BoundUnaryOperatorKind::LogicalNegation) {
+    return Value(!operand.AsBool());
   }
+  return operand;
 }
 
 Value Evaluator::evaluate_literal_expression(
@@ -62,6 +63,10 @@ Value Evaluator::evaluate_binary_expression(
       return Value(left.AsInt() * right.AsInt());
     case BoundBinaryOperatorKind::Division:
       return Value(left.AsInt() / right.AsInt());
+    case BoundBinaryOperatorKind::LogicalAnd:
+      return Value(left.AsBool() && right.AsBool());
+    case BoundBinaryOperatorKind::LogicalOr:
+      return Value(left.AsBool() || right.AsBool());
   }
 
   throw std::runtime_error("Unexpected binary operator: " +

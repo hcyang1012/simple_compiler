@@ -56,6 +56,18 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::IdentifierToken) {
     return "IdentifierToken";
   }
+
+  if (kind == SyntaxKind::AmpersandAmpersandToken) {
+    return "AmpersandAmpersandToken";
+  }
+
+  if (kind == SyntaxKind::PipePipeToken) {
+    return "PipePipeToken";
+  }
+
+  if (kind == SyntaxKind::BangToken) {
+    return "BangToken";
+  }
   return "BadToken";
 }
 }  // namespace simple_compiler

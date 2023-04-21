@@ -21,6 +21,8 @@ class Lexer {
   std::vector<std::string> diagnostics_;
 
   char current_char() const;
+  char lookahead() const;
+  char peek(const size_t offset) const;
   void next();
 };
 };  // namespace simple_compiler

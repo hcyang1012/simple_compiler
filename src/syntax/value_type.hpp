@@ -10,6 +10,7 @@ class Value {
   explicit Value(int value);
   explicit Value(bool value);
   int AsInt() const;
+  bool AsBool() const;
   ValueType Type() const;
   std::string ToString() const;
  private:
