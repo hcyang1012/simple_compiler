@@ -26,7 +26,7 @@ Value Evaluator::evaluate_expression(
       return evaluate_binary_expression(
           std::static_pointer_cast<const BoundBinaryExpressionNode>(node));
     case BoundNodeKind::BoundLiteralExpression:
-      return evaluate_number_expression(
+      return evaluate_literal_expression(
           std::static_pointer_cast<const BoundLiteralExpressionNode>(node));
   }
 
@@ -43,7 +43,7 @@ Value Evaluator::evaluate_unary_expression(
   }
 }
 
-Value Evaluator::evaluate_number_expression(
+Value Evaluator::evaluate_literal_expression(
     const std::shared_ptr<const BoundLiteralExpressionNode>& node) const {
   return node->Value();
 }

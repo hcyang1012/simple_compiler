@@ -2,6 +2,7 @@
 
 namespace simple_compiler {
 Value::Value(int value) : type_(ValueType::Int), data_({.int_ = value}) {}
+Value::Value(bool value): type_(ValueType::Boolean), data_({.boolean_ = value}) {}
 
 int Value::AsInt() const { return data_.int_; }
 
@@ -11,6 +12,8 @@ std::string ToString(const ValueType& value) {
   switch (value) {
     case ValueType::Int:
       return "int";
+    case ValueType::Boolean:
+      return "boolean";
   }
   return "";
 }
@@ -19,6 +22,8 @@ std::string Value::ToString() const {
   switch (type_) {
     case ValueType::Int:
       return std::to_string(data_.int_);
+    case ValueType::Boolean:
+      return data_.boolean_ ? "true" : "false";
   }
   return "";
 }

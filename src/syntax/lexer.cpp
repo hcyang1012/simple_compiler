@@ -1,6 +1,7 @@
 #include "lexer.hpp"
 
 #include <memory>
+#include "syntax_fact.hpp"
 namespace simple_compiler {
 Lexer::Lexer(const std::string& text) : text_(text), position_(0) {}
 
@@ -43,6 +44,17 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
     std::string text = text_.substr(start, length);
     return std::make_shared<SyntaxToken>(SyntaxKind::WhiteSpaceToken, start,
                                          text);
+  }
+
+  if(std::isalpha(current_char())){
+    size_t start = position_;
+    while(std::isalpha(current_char())){
+      next();
+    }
+    size_t length = position_ - start;
+    std::string text = text_.substr(start, length);
+    auto kind = SyntaxFact::GetKeywordKind(text);
+    return std::make_shared<SyntaxToken>(kind, start, text);
   }
 
   if (current_char() == '+') {

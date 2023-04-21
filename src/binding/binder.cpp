@@ -32,7 +32,8 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_literal_expression(
     int int_value = std::stoi(syntax->ValueText());
     value = std::make_shared<Value>(int_value);
   } catch (std::exception& e) {
-    value = std::make_shared<Value>(0);
+    bool bool_value = syntax->LiteralToken()->Kind() == SyntaxKind::TrueKeyword;
+    value = std::make_shared<Value>(bool_value);
   }
   return std::make_shared<BoundLiteralExpressionNode>(*value);
 }
@@ -61,7 +62,7 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_unary_expression(
   auto bound_operand = BindExpression(syntax->Operand());
   auto bound_operator = bind_unary_operator_kind(syntax->Operator()->Kind(),
                                                  bound_operand->Type());
-  if (bound_operand == nullptr) {
+  if (bound_operand->Type() != ValueType::Int) {
     diagnostics_.push_back(
         "Unary operator '" + ToString(syntax->Operator()->Kind()) +
         "' is not defined for type '" + ToString(bound_operand->Type()) + "'.");

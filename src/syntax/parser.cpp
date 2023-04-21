@@ -120,8 +120,16 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_primary_expression() {
     return std::make_shared<const ParenthesizedExpressionSyntax>(
         left, expression, right);
   }
+
+  if(current()->Kind() == SyntaxKind::TrueKeyword || current()->Kind() == SyntaxKind::FalseKeyword){
+    auto keyword_token = next_token();
+    Value value(keyword_token->Kind() == SyntaxKind::TrueKeyword);
+    return std::make_shared<const LiteralExpressionSyntax>(keyword_token, value);
+
+  }
   auto number_token = match(SyntaxKind::NumberToken);
-  return std::make_shared<const LiteralExpressionSyntax>(number_token);
+  Value value(std::stoi(number_token->Text()));
+  return std::make_shared<const LiteralExpressionSyntax>(number_token, value);
 }
 
 std::shared_ptr<const SyntaxToken> Parser::peek(const size_t offset) const {

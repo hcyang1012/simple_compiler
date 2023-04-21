@@ -4,6 +4,7 @@
 
 #include "syntax_kind.hpp"
 #include "syntax_token.hpp"
+#include "syntax/value_type.hpp"
 namespace simple_compiler {
 
 class SyntaxNode {
@@ -22,13 +23,14 @@ class ExpressionSyntax : public SyntaxNode {};
 
 class LiteralExpressionSyntax : public ExpressionSyntax {
  public:
-  LiteralExpressionSyntax(const std::shared_ptr<const SyntaxToken> number_token);
-  std::shared_ptr<const SyntaxToken> NumberToken() const;
+  LiteralExpressionSyntax(const std::shared_ptr<const SyntaxToken> number_token, const Value value);
+  std::shared_ptr<const SyntaxToken> LiteralToken() const;
   SyntaxKind Kind() const override;
   std::string ValueText() const override;
 
  private:
-  const std::shared_ptr<const SyntaxToken> number_token_;
+  const Value value_;
+  const std::shared_ptr<const SyntaxToken> literal_token_;
 };
 
 class OperatorSyntax : public SyntaxNode {

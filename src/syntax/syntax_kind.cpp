@@ -28,23 +28,33 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::EndOfFileToken) {
     return "EndOfFileToken";
   }
-  if(kind == SyntaxKind::LiteralExpression){
+  if (kind == SyntaxKind::LiteralExpression) {
     return "LiteralExpression";
   }
-  if(kind == SyntaxKind::BinaryExpression){
+  if (kind == SyntaxKind::BinaryExpression) {
     return "BinaryExpression";
   }
-  if(kind == SyntaxKind::OpenParenthesisExpression){
+  if (kind == SyntaxKind::OpenParenthesisExpression) {
     return "OpenParenthesisExpression";
   }
-  if(kind == SyntaxKind::CloseParenthesisExpression){
+  if (kind == SyntaxKind::CloseParenthesisExpression) {
     return "CloseParenthesisExpression";
   }
-  if(kind == SyntaxKind::ParenthesisExpression){
+  if (kind == SyntaxKind::ParenthesisExpression) {
     return "ParenthesisExpression";
   }
-  if(kind == SyntaxKind::UnaryExpression){
+  if (kind == SyntaxKind::UnaryExpression) {
     return "UnaryExpression";
+  }
+
+  if (kind == SyntaxKind::TrueKeyword) {
+    return "TrueKeyword";
+  }
+  if (kind == SyntaxKind::FalseKeyword) {
+    return "FalseKeyword";
+  }
+  if (kind == SyntaxKind::IdentifierToken) {
+    return "IdentifierToken";
   }
   return "BadToken";
 }

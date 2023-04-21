@@ -13,6 +13,10 @@ enum SyntaxKind {
   SlashToken,
   OpenParenthesisToken,
   CloseParenthesisToken,
+  IdentifierToken,
+
+  TrueKeyword,
+  FalseKeyword,
 
   LiteralExpression,
   UnaryExpression,

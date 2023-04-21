@@ -10,18 +10,18 @@ std::vector<std::shared_ptr<const SyntaxNode>> SyntaxNode::GetChildren() const {
 }
 
 LiteralExpressionSyntax::LiteralExpressionSyntax(
-    const std::shared_ptr<const SyntaxToken> number_token)
-    : number_token_(number_token) {}
+    const std::shared_ptr<const SyntaxToken> literal_token, const Value value)
+    : literal_token_(literal_token), value_(value) {}
 
-std::shared_ptr<const SyntaxToken> LiteralExpressionSyntax::NumberToken() const {
-  return number_token_;
+std::shared_ptr<const SyntaxToken> LiteralExpressionSyntax::LiteralToken() const {
+  return literal_token_;
 }
 SyntaxKind LiteralExpressionSyntax::Kind() const {
   return SyntaxKind::LiteralExpression;
 }
 
 std::string LiteralExpressionSyntax::ValueText() const {
-  return number_token_->Text();
+  return literal_token_->Text();
 }
 
 OperatorSyntax::OperatorSyntax(

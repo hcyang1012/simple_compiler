@@ -23,4 +23,15 @@ int SyntaxFact::GetBinaryOperatorPrecedence(SyntaxKind kind) {
       return 0;
   }
 }
+SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
+  if(text == "true"){
+    return SyntaxKind::TrueKeyword;
+  }
+
+  if(text == "false"){
+    return SyntaxKind::FalseKeyword;
+  }
+
+  return SyntaxKind::IdentifierToken;
+}
 }  // namespace simple_compiler

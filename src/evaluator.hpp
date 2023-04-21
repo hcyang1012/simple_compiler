@@ -18,7 +18,7 @@ class Evaluator {
   Value evaluate_unary_expression(const std::shared_ptr<const BoundUnaryExpressionNode>& node) const;
   Value evaluate_binary_expression(
       const std::shared_ptr<const BoundBinaryExpressionNode>& node) const;
-  Value evaluate_number_expression(
+  Value evaluate_literal_expression(
       const std::shared_ptr<const BoundLiteralExpressionNode>& node) const;
   std::vector<std::string> diagnostics_;
 };

@@ -3,10 +3,12 @@
 namespace simple_compiler {
 enum ValueType {
   Int = 0,
+  Boolean,
 };
 class Value {
  public:
   explicit Value(int value);
+  explicit Value(bool value);
   int AsInt() const;
   ValueType Type() const;
   std::string ToString() const;
@@ -14,6 +16,7 @@ class Value {
   const ValueType type_;
   union {
     int int_;
+    bool boolean_;
   } data_;
 };
 
