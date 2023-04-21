@@ -12,6 +12,8 @@ enum BoundBinaryOperatorKind {
   Division,
   LogicalAnd,
   LogicalOr,
+  Equals,
+  NotEquals,
 };
 class BoundBinaryOperatorNode {
  public:

@@ -84,6 +84,11 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
   }
 
   if (current_char() == '!') {
+    if(lookahead() == '='){
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::BangEqualsToken,
+                                           position_ - 2, "!=");
+    }
     return std::make_shared<SyntaxToken>(SyntaxKind::BangToken, position_++,
                                          "!");
   }
@@ -102,6 +107,13 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
     }
   }
 
+  if(current_char() == '='){
+    if(lookahead() == '='){
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::EqualsEqualsToken,
+                                           position_ - 2, "==");
+    }
+  }
   diagnostics_.emplace_back("Lexer ERROR: bad character at position " +
                             std::to_string(position_));
   auto prev_position = position_++;

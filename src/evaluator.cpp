@@ -67,6 +67,10 @@ Value Evaluator::evaluate_binary_expression(
       return Value(left.AsBool() && right.AsBool());
     case BoundBinaryOperatorKind::LogicalOr:
       return Value(left.AsBool() || right.AsBool());
+    case BoundBinaryOperatorKind::Equals:
+      return Value(left.Equals(right));
+    case BoundBinaryOperatorKind::NotEquals:
+      return Value(!left.Equals(right));
   }
 
   throw std::runtime_error("Unexpected binary operator: " +

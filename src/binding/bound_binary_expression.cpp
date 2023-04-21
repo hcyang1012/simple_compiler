@@ -11,7 +11,9 @@ BoundNodeKind BoundBinaryExpressionNode::Kind() const {
   return BoundNodeKind::BoundBinaryExpression;
 }
 
-ValueType BoundBinaryExpressionNode::Type() const { return left_->Type(); }
+ValueType BoundBinaryExpressionNode::Type() const {
+  return operator_->ResultType();
+}
 
 const std::shared_ptr<const BoundExpressionNode>
 BoundBinaryExpressionNode::Left() const {

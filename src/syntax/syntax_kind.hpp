@@ -17,6 +17,8 @@ enum SyntaxKind {
   AmpersandAmpersandToken,
   PipePipeToken,
   BangToken,
+  BangEqualsToken,
+  EqualsEqualsToken,
 
   TrueKeyword,
   FalseKeyword,

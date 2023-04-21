@@ -5,9 +5,8 @@ int SyntaxFact::GetUnaryOperatorPrecedence(SyntaxKind kind) {
   switch (kind) {
     case SyntaxKind::PlusToken:
     case SyntaxKind::MinusToken:
-      return 5;
     case SyntaxKind::BangToken:
-      return 4;
+      return 6;
     default:
       return 0;
   }
@@ -16,16 +15,21 @@ int SyntaxFact::GetBinaryOperatorPrecedence(SyntaxKind kind) {
   switch (kind) {
     case SyntaxKind::StarToken:
     case SyntaxKind::SlashToken:
-      return 3;
+      return 5;
 
     case SyntaxKind::PlusToken:
     case SyntaxKind::MinusToken:
-      return 2;
+      return 4;
+
+    case SyntaxKind::EqualsEqualsToken:
+    case SyntaxKind::BangEqualsToken:
+      return 3;
 
     case SyntaxKind::AmpersandAmpersandToken:
+      return 2;
+
     case SyntaxKind::PipePipeToken:
       return 1;
-
     default:
       return 0;
   }

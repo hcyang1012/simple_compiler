@@ -69,6 +69,22 @@ std::shared_ptr<const BoundBinaryOperatorNode> BoundBinaryOperatorNode::Bind(
               simple_compiler::SyntaxKind::PipePipeToken,
               BoundBinaryOperatorKind::LogicalOr, ValueType::Boolean,
               ValueType::Boolean),
+          std::make_shared<const BoundBinaryOperatorNode>(
+              simple_compiler::SyntaxKind::EqualsEqualsToken,
+              BoundBinaryOperatorKind::Equals, ValueType::Int, ValueType::Int,
+              ValueType::Boolean),
+          std::make_shared<const BoundBinaryOperatorNode>(
+              simple_compiler::SyntaxKind::EqualsEqualsToken,
+              BoundBinaryOperatorKind::Equals, ValueType::Boolean,
+              ValueType::Boolean, ValueType::Boolean),
+          std::make_shared<const BoundBinaryOperatorNode>(
+              simple_compiler::SyntaxKind::BangEqualsToken,
+              BoundBinaryOperatorKind::NotEquals, ValueType::Int,
+              ValueType::Int, ValueType::Boolean),
+          std::make_shared<const BoundBinaryOperatorNode>(
+              simple_compiler::SyntaxKind::BangEqualsToken,
+              BoundBinaryOperatorKind::NotEquals, ValueType::Boolean,
+              ValueType::Boolean, ValueType::Boolean),
       };
 
   for (const auto& op : operators) {

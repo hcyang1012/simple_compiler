@@ -11,6 +11,7 @@ class Value {
   explicit Value(bool value);
   int AsInt() const;
   bool AsBool() const;
+  bool Equals(const Value& other) const;
   ValueType Type() const;
   std::string ToString() const;
  private:
