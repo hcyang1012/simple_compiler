@@ -28,7 +28,11 @@ set(SOURCES
 
   ${SRC_DIR}/evaluation/evaluator.cpp
   ${SRC_DIR}/evaluation/evaluation_result.cpp
+
   ${SRC_DIR}/compilation/compilation.cpp
+
+  ${SRC_DIR}/diagnostics/text_span.cpp
+  ${SRC_DIR}/diagnostics/diagnostics.cpp
 )
 
 set(TARGET_NAME my_compiler)

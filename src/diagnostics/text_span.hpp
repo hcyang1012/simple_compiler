@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 
 namespace simple_compiler {
 class TextSpan {
@@ -11,5 +12,5 @@ class TextSpan {
  private:
   const size_t start_;
   const size_t length_;
-}
+};
 }  // namespace simple_compiler
