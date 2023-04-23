@@ -20,6 +20,10 @@ std::shared_ptr<BoundExpressionNode> Binder::BindExpression(
     case SyntaxKind::UnaryExpression:
       return bind_unary_expression(
           std::static_pointer_cast<const UnaryExpressionSyntax>(syntax));
+    case SyntaxKind::ParenthesisExpression:
+      return BindExpression(
+          std::static_pointer_cast<const ParenthesizedExpressionSyntax>(syntax)
+              ->Expression());
     default:
       throw std::runtime_error("Unexpected syntax kind: " +
                                ToString(syntax->Kind()));
