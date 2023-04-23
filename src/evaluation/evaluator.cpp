@@ -2,8 +2,8 @@
 
 #include <stdexcept>
 
-#include "syntax/parser.hpp"
-#include "syntax/value_type.hpp"
+#include "../syntax/parser.hpp"
+#include "../syntax/value_type.hpp"
 
 namespace simple_compiler {
 Evaluator::Evaluator(const std::shared_ptr<const BoundExpressionNode>& root)

@@ -25,7 +25,10 @@ set(SOURCES
   ${SRC_DIR}/binding/bound_unary_expression.cpp
   ${SRC_DIR}/binding/bound_unary_operator.cpp
   ${SRC_DIR}/binding/bound_binary_operator.cpp
-  ${SRC_DIR}/evaluator.cpp
+
+  ${SRC_DIR}/evaluation/evaluator.cpp
+  ${SRC_DIR}/evaluation/evaluation_result.cpp
+  ${SRC_DIR}/compilation/compilation.cpp
 )
 
 set(TARGET_NAME my_compiler)

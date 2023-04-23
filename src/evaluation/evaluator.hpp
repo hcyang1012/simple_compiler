@@ -2,12 +2,12 @@
 #include <memory>
 #include <vector>
 
-#include "binding/bind_node.hpp"
-#include "binding/bound_binary_expression.hpp"
-#include "binding/bound_literal_expression.hpp"
-#include "binding/bound_unary_expression.hpp"
-#include "syntax/syntax_node.hpp"
-#include "syntax/value_type.hpp"
+#include "../binding/bind_node.hpp"
+#include "../binding/bound_binary_expression.hpp"
+#include "../binding/bound_literal_expression.hpp"
+#include "../binding/bound_unary_expression.hpp"
+#include "../syntax/syntax_node.hpp"
+#include "../syntax/value_type.hpp"
 
 namespace simple_compiler {
 class Evaluator {
