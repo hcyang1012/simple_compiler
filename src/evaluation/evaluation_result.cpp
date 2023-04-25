@@ -3,11 +3,11 @@
 #include <memory>
 namespace simple_compiler {
 EvaluationResult::EvaluationResult(
-    std::shared_ptr<std::vector<std::string>> diagnostics,
+    const std::shared_ptr<const DiagnosticsBag> diagnostics,
     const simple_compiler::Value value)
     : diagnostics_(diagnostics), value_(value) {}
 
-std::shared_ptr<std::vector<std::string>> EvaluationResult::Diagnostics()
+const std::shared_ptr<const DiagnosticsBag> EvaluationResult::Diagnostics()
     const {
   return diagnostics_;
 }

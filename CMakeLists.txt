@@ -33,6 +33,7 @@ set(SOURCES
 
   ${SRC_DIR}/diagnostics/text_span.cpp
   ${SRC_DIR}/diagnostics/diagnostics.cpp
+  ${SRC_DIR}/diagnostics/diagnostics_bag.cpp
 )
 
 set(TARGET_NAME my_compiler)

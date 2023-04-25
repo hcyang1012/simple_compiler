@@ -30,7 +30,7 @@ std::shared_ptr<BoundExpressionNode> Binder::BindExpression(
   }
 }
 
-const std::vector<std::string>& Binder::Diagnostics() const {
+const std::shared_ptr<const DiagnosticsBag> Binder::Diagnostics() const {
   return diagnostics_;
 }
 
@@ -54,10 +54,9 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_binary_expression(
   auto bound_operator = BoundBinaryOperatorNode::Bind(
       syntax->Operator()->Kind(), bound_left->Type(), bound_right->Type());
   if (bound_operator == nullptr) {
-    diagnostics_.push_back(
-        "Binary operator '" + syntax->Operator()->ValueText() +
-        "' is not defined for types '" + ToString(bound_left->Type()) +
-        "' and '" + ToString(bound_right->Type()) + "'.");
+    diagnostics_->ReportUndefinedBinaryOperator(
+        syntax->Operator()->Span(), *(syntax->Operator()), bound_left->Type(),
+        bound_right->Type());
     return bound_left;
   }
   return std::make_shared<BoundBinaryExpressionNode>(bound_left, bound_operator,
@@ -70,9 +69,9 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_unary_expression(
   auto bound_operator = BoundUnaryOperatorNode::Bind(syntax->Operator()->Kind(),
                                                      bound_operand->Type());
   if (bound_operator == nullptr) {
-    diagnostics_.push_back(
-        "Unary operator '" + syntax->Operator()->ValueText() +
-        "' is not defined for type '" + ToString(bound_operand->Type()) + "'.");
+    diagnostics_->ReportUndefinedUnaryOperator(syntax->Operator()->Span(),
+                                               *(syntax->Operator()),
+                                               bound_operand->Type());
     return bound_operand;
   }
   return std::make_shared<BoundUnaryExpressionNode>(bound_operator,

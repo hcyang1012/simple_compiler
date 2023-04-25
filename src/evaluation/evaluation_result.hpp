@@ -4,17 +4,18 @@
 #include <memory>
 
 #include "../syntax/value_type.hpp"
+#include "../diagnostics/diagnostics_bag.hpp"
 
 namespace simple_compiler {
 class EvaluationResult {
  public:
-  EvaluationResult(std::shared_ptr<std::vector<std::string>> diagnostics,
+  EvaluationResult(const std::shared_ptr<const DiagnosticsBag> diagnostics,
                    const Value value);
-  std::shared_ptr<std::vector<std::string>> Diagnostics() const;
+  const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
   const simple_compiler::Value& Value() const;
 
  private:
-  std::shared_ptr<std::vector<std::string>> diagnostics_;
+  const std::shared_ptr<const DiagnosticsBag> diagnostics_;
   const simple_compiler::Value value_;
 };
 

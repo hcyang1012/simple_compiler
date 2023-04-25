@@ -11,7 +11,7 @@ namespace simple_compiler {
 class Compilation {
  public:
   Compilation(const std::shared_ptr<const SyntaxTree> syntax_tree);
-  EvaluationResult Evaluate() const;
+  EvaluationResult Evaluate();
   const std::shared_ptr<const simple_compiler::SyntaxTree> SyntaxTree() const;
 
  private:

@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "diagnostics/diagnostics_bag.hpp"
 #include "lexer.hpp"
 #include "syntax_fact.hpp"
 #include "syntax_node.hpp"
@@ -31,13 +32,10 @@ Parser::Parser(const std::string& text) : position_(0) {
     }
 
   } while (token != nullptr && token->Kind() != SyntaxKind::EndOfFileToken);
-  std::copy(lexer.Diagnostics().begin(), lexer.Diagnostics().end(),
-            std::back_inserter(diagnostics_));
+  diagnostics_->AddRange(*(lexer.Diagnostics()));
 }
 
-const std::vector<std::string>& Parser::Diagnostics() const {
-  return diagnostics_;
-}
+const std::shared_ptr<const DiagnosticsBag> Parser::Diagnostics() const { return diagnostics_; }
 
 std::shared_ptr<const SyntaxToken> Parser::next_token() {
   const auto current = this->current();
@@ -49,9 +47,8 @@ std::shared_ptr<const SyntaxToken> Parser::match(const SyntaxKind kind) {
   if (current()->Kind() == kind) {
     return next_token();
   }
-  diagnostics_.push_back(
-      "Parser ERROR: Unexpected token: " + ToString(current()->Kind()) +
-      ". Expected: " + ToString(kind));
+  diagnostics_->ReportUnexpectedToken(current()->Span(), current()->Kind(),
+                                     kind);
   return std::make_shared<const SyntaxToken>(kind, current()->Position(), "");
 }
 
@@ -92,8 +89,7 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_expression(
   if (unary_precedence != 0 && unary_precedence >= parent_precedence) {
     auto op = std::make_shared<OperatorSyntax>(next_token());
     auto operand = parse_expression(unary_precedence);
-    left =
-        std::make_shared<const UnaryExpressionSyntax>(op, operand);
+    left = std::make_shared<const UnaryExpressionSyntax>(op, operand);
   } else {
     left = parse_primary_expression();
   }
@@ -121,11 +117,12 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_primary_expression() {
         left, expression, right);
   }
 
-  if(current()->Kind() == SyntaxKind::TrueKeyword || current()->Kind() == SyntaxKind::FalseKeyword){
+  if (current()->Kind() == SyntaxKind::TrueKeyword ||
+      current()->Kind() == SyntaxKind::FalseKeyword) {
     auto keyword_token = next_token();
     Value value(keyword_token->Kind() == SyntaxKind::TrueKeyword);
-    return std::make_shared<const LiteralExpressionSyntax>(keyword_token, value);
-
+    return std::make_shared<const LiteralExpressionSyntax>(keyword_token,
+                                                           value);
   }
   auto number_token = match(SyntaxKind::NumberToken);
   Value value(std::stoi(number_token->Text()));

@@ -11,17 +11,17 @@ Compilation::Compilation(
     const std::shared_ptr<const simple_compiler::SyntaxTree> syntax_tree)
     : syntax_tree_(syntax_tree) {}
 
-EvaluationResult Compilation::Evaluate() const {
+EvaluationResult Compilation::Evaluate() {
   auto binder = Binder();
   auto bound_expression = binder.BindExpression(syntax_tree_->Root());
 
-  auto diagnostics = syntax_tree_->Diagnostics();
-  diagnostics.insert(diagnostics.end(), binder.Diagnostics().begin(),
-                     binder.Diagnostics().end());
+  auto diagnostics = std::make_shared<DiagnosticsBag>();
+  diagnostics->AddRange(*(syntax_tree_->Diagnostics()));
+  diagnostics->AddRange(*(binder.Diagnostics()));
 
   auto evaluator = Evaluator(bound_expression);
   auto value = evaluator.Evaluate();
-  return EvaluationResult(std::make_shared<std::vector<std::string>>(), value);
+  return EvaluationResult(diagnostics, value);
 }
 
 const std::shared_ptr<const simple_compiler::SyntaxTree>

@@ -2,6 +2,7 @@
 #include <string>
 
 #include "syntax_kind.hpp"
+#include "../diagnostics/text_span.hpp"
 namespace simple_compiler {
 
 class SyntaxToken {
@@ -13,6 +14,7 @@ class SyntaxToken {
   const std::string& Text() const;
 
   SyntaxKind Kind() const;
+  TextSpan Span() const;
 
  private:
   const SyntaxKind kind_;

@@ -5,6 +5,7 @@
 #include "syntax_kind.hpp"
 #include "syntax_token.hpp"
 #include "syntax/value_type.hpp"
+#include "../diagnostics/diagnostics.hpp"
 namespace simple_compiler {
 
 class SyntaxNode {
@@ -12,6 +13,7 @@ class SyntaxNode {
   virtual SyntaxKind Kind() const = 0;
   virtual std::vector<std::shared_ptr<const SyntaxNode>> GetChildren() const;
   virtual std::string ValueText() const;
+  virtual TextSpan Span() const;
   std::string ToString() const;
 
  private:
@@ -39,6 +41,7 @@ class OperatorSyntax : public SyntaxNode {
   std::shared_ptr<const SyntaxToken> OperatorToken() const;
   SyntaxKind Kind() const override;
   std::string ValueText() const override;
+  TextSpan Span() const override;
 
  private:
   const std::shared_ptr<const SyntaxToken> operator_token_;
@@ -54,6 +57,7 @@ class BinaryExpressionSyntax : public ExpressionSyntax {
   std::shared_ptr<const ExpressionSyntax> Right() const;
   SyntaxKind Kind() const override;
   std::vector<std::shared_ptr<const SyntaxNode>> GetChildren() const override;
+  TextSpan Span() const override;
 
  private:
   const std::shared_ptr<const ExpressionSyntax> left_;
@@ -69,6 +73,7 @@ class UnaryExpressionSyntax : public ExpressionSyntax {
   std::shared_ptr<const ExpressionSyntax> Operand() const;
   SyntaxKind Kind() const override;
   std::vector<std::shared_ptr<const SyntaxNode>> GetChildren() const override;
+  TextSpan Span() const override;
 
  private:
   const std::shared_ptr<const OperatorSyntax> operator_;

@@ -5,6 +5,8 @@
 namespace simple_compiler {
 std::string SyntaxNode::ValueText() const { return ""; }
 
+TextSpan SyntaxNode::Span() const { return TextSpan(0, 0); }
+
 std::vector<std::shared_ptr<const SyntaxNode>> SyntaxNode::GetChildren() const {
   return {};
 }
@@ -13,7 +15,8 @@ LiteralExpressionSyntax::LiteralExpressionSyntax(
     const std::shared_ptr<const SyntaxToken> literal_token, const Value value)
     : literal_token_(literal_token), value_(value) {}
 
-std::shared_ptr<const SyntaxToken> LiteralExpressionSyntax::LiteralToken() const {
+std::shared_ptr<const SyntaxToken> LiteralExpressionSyntax::LiteralToken()
+    const {
   return literal_token_;
 }
 SyntaxKind LiteralExpressionSyntax::Kind() const {
@@ -37,6 +40,8 @@ SyntaxKind OperatorSyntax::Kind() const { return operator_token_->Kind(); }
 std::string OperatorSyntax::ValueText() const {
   return operator_token_->Text();
 }
+
+TextSpan OperatorSyntax::Span() const { return operator_token_->Span(); }
 
 BinaryExpressionSyntax::BinaryExpressionSyntax(
     const std::shared_ptr<const ExpressionSyntax> left,
@@ -64,6 +69,8 @@ BinaryExpressionSyntax::GetChildren() const {
   children.push_back(right_);
   return children;
 }
+
+TextSpan BinaryExpressionSyntax::Span() const { return operator_->Span(); }
 
 std::string SyntaxNode::ToString() const {
   return simple_compiler::ToString(Kind()) + ": " + ValueText();
@@ -162,5 +169,7 @@ UnaryExpressionSyntax::GetChildren() const {
   children.push_back(operand_);
   return children;
 }
+
+TextSpan UnaryExpressionSyntax::Span() const { return operator_->Span(); }
 
 }  // namespace simple_compiler

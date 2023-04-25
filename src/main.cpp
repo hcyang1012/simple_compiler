@@ -23,8 +23,14 @@ int main(int argc, char** argv) {
     auto result = compilation.Evaluate();
 
     auto diagnostics = result.Diagnostics();
-    for (const auto& diag : *diagnostics) {
-      std::cout << diag << std::endl;
+    for (const auto& diag : diagnostics->Diagnostics()) {
+      std::cout << diag.Message() << std::endl;
+      auto prefix = line.substr(0, diag.Span().Start());
+      auto error = line.substr(diag.Span().Start(),
+                                         diag.Span().Length());
+      auto suffix = line.substr(diag.Span().End());
+      std::cout << prefix << "\033[1;31m" << error << "\033[0m" << suffix
+                << std::endl;
     }
     std::cout << result.Value().ToString() << std::endl;
   }
