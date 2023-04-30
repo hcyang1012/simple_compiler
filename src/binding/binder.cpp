@@ -1,7 +1,10 @@
 #include "binder.hpp"
 
+#include <memory>
 #include <stdexcept>
 
+#include "../syntax/literal_expression_syntax.hpp"
+#include "../syntax/parenthesis_expression_syntax.hpp"
 #include "bound_binary_expression.hpp"
 #include "bound_literal_expression.hpp"
 #include "bound_unary_expression.hpp"

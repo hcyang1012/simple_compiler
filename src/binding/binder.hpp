@@ -4,7 +4,10 @@
 #include <vector>
 
 #include "../diagnostics/diagnostics_bag.hpp"
+#include "../syntax/binary_expression_syntax.hpp"
+#include "../syntax/literal_expression_syntax.hpp"
 #include "../syntax/syntax_node.hpp"
+#include "../syntax/unary_expression_syntax.hpp"
 #include "binding/bind_node.hpp"
 #include "binding/bound_binary_expression.hpp"
 #include "binding/bound_literal_expression.hpp"

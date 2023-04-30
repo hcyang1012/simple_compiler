@@ -4,7 +4,9 @@
 
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/value_type.hpp"
+#include "../syntax/operator_syntax.hpp"
 #include "diagnostics.hpp"
+#include "text_span.hpp"
 
 namespace simple_compiler {
 class DiagnosticsBag {

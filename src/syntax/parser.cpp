@@ -2,10 +2,16 @@
 
 #include <vector>
 
+#include "binary_expression_syntax.hpp"
+#include "close_parenthesis_syntax.hpp"
 #include "diagnostics/diagnostics_bag.hpp"
 #include "lexer.hpp"
+#include "literal_expression_syntax.hpp"
+#include "open_parenthesis_syntax.hpp"
+#include "parenthesis_expression_syntax.hpp"
 #include "syntax_fact.hpp"
 #include "syntax_node.hpp"
+#include "unary_expression_syntax.hpp"
 
 namespace simple_compiler {
 
@@ -35,7 +41,9 @@ Parser::Parser(const std::string& text) : position_(0) {
   diagnostics_->AddRange(*(lexer.Diagnostics()));
 }
 
-const std::shared_ptr<const DiagnosticsBag> Parser::Diagnostics() const { return diagnostics_; }
+const std::shared_ptr<const DiagnosticsBag> Parser::Diagnostics() const {
+  return diagnostics_;
+}
 
 std::shared_ptr<const SyntaxToken> Parser::next_token() {
   const auto current = this->current();
@@ -48,7 +56,7 @@ std::shared_ptr<const SyntaxToken> Parser::match(const SyntaxKind kind) {
     return next_token();
   }
   diagnostics_->ReportUnexpectedToken(current()->Span(), current()->Kind(),
-                                     kind);
+                                      kind);
   return std::make_shared<const SyntaxToken>(kind, current()->Position(), "");
 }
 
