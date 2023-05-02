@@ -15,7 +15,7 @@ class Value {
   ValueType Type() const;
   std::string ToString() const;
  private:
-  const ValueType type_;
+  ValueType type_;
   union {
     int int_;
     bool boolean_;

@@ -2,10 +2,19 @@
 
 #include <vector>
 
+#include "assignment_expression_syntax.hpp"
+#include "binary_expression_syntax.hpp"
+#include "close_parenthesis_syntax.hpp"
+#include "diagnostics/diagnostics_bag.hpp"
+#include "identifier_syntax.hpp"
 #include "lexer.hpp"
+#include "literal_expression_syntax.hpp"
+#include "name_expression_syntax.hpp"
+#include "open_parenthesis_syntax.hpp"
+#include "parenthesis_expression_syntax.hpp"
 #include "syntax_fact.hpp"
 #include "syntax_node.hpp"
-
+#include "unary_expression_syntax.hpp"
 namespace simple_compiler {
 
 /**
@@ -31,11 +40,10 @@ Parser::Parser(const std::string& text) : position_(0) {
     }
 
   } while (token != nullptr && token->Kind() != SyntaxKind::EndOfFileToken);
-  std::copy(lexer.Diagnostics().begin(), lexer.Diagnostics().end(),
-            std::back_inserter(diagnostics_));
+  diagnostics_->AddRange(*(lexer.Diagnostics()));
 }
 
-const std::vector<std::string>& Parser::Diagnostics() const {
+const std::shared_ptr<const DiagnosticsBag> Parser::Diagnostics() const {
   return diagnostics_;
 }
 
@@ -49,9 +57,8 @@ std::shared_ptr<const SyntaxToken> Parser::match(const SyntaxKind kind) {
   if (current()->Kind() == kind) {
     return next_token();
   }
-  diagnostics_.push_back(
-      "Parser ERROR: Unexpected token: " + ToString(current()->Kind()) +
-      ". Expected: " + ToString(kind));
+  diagnostics_->ReportUnexpectedToken(current()->Span(), current()->Kind(),
+                                      kind);
   return std::make_shared<const SyntaxToken>(kind, current()->Position(), "");
 }
 
@@ -83,7 +90,24 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_term() {
   return left;
 }
 
-std::shared_ptr<const ExpressionSyntax> Parser::parse_expression(
+std::shared_ptr<const ExpressionSyntax> Parser::parse_expression() {
+  return parse_assignment_expression();
+}
+
+std::shared_ptr<const ExpressionSyntax> Parser::parse_assignment_expression() {
+  if (peek(0)->Kind() == SyntaxKind::IdentifierToken &&
+      peek(1)->Kind() == SyntaxKind::EqualsToken) {
+    auto identifier_syntax =
+        std::make_shared<const IdentifierSyntax>(next_token());
+    auto op = std::make_shared<const OperatorSyntax>(next_token());
+    auto right = parse_assignment_expression();
+    return std::make_shared<const AssignmentExpressionSyntax>(identifier_syntax,
+                                                              op, right);
+  }
+  return parse_binary_expression();
+}
+
+std::shared_ptr<const ExpressionSyntax> Parser::parse_binary_expression(
     const int parent_precedence) {
   std::shared_ptr<const simple_compiler::ExpressionSyntax> left;
 
@@ -91,9 +115,8 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_expression(
       SyntaxFact::GetUnaryOperatorPrecedence(current()->Kind());
   if (unary_precedence != 0 && unary_precedence >= parent_precedence) {
     auto op = std::make_shared<OperatorSyntax>(next_token());
-    auto operand = parse_expression(unary_precedence);
-    left =
-        std::make_shared<const UnaryExpressionSyntax>(op, operand);
+    auto operand = parse_binary_expression(unary_precedence);
+    left = std::make_shared<const UnaryExpressionSyntax>(op, operand);
   } else {
     left = parse_primary_expression();
   }
@@ -105,7 +128,7 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_expression(
       break;
     }
     auto op = std::make_shared<const OperatorSyntax>(next_token());
-    auto right = parse_expression(precedence);
+    auto right = parse_binary_expression(precedence);
     left = std::make_shared<const BinaryExpressionSyntax>(left, op, right);
   }
   return left;
@@ -114,19 +137,26 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_expression(
 std::shared_ptr<const ExpressionSyntax> Parser::parse_primary_expression() {
   if (current()->Kind() == SyntaxKind::OpenParenthesisToken) {
     auto left = std::make_shared<const OpenParenthesisSyntax>(next_token());
-    auto expression = parse_expression();
+    auto expression = (parse_expression());
     auto right = std::make_shared<const CloseParenthesisSyntax>(
         match(SyntaxKind::CloseParenthesisToken));
     return std::make_shared<const ParenthesizedExpressionSyntax>(
         left, expression, right);
   }
 
-  if(current()->Kind() == SyntaxKind::TrueKeyword || current()->Kind() == SyntaxKind::FalseKeyword){
+  if (current()->Kind() == SyntaxKind::TrueKeyword ||
+      current()->Kind() == SyntaxKind::FalseKeyword) {
     auto keyword_token = next_token();
     Value value(keyword_token->Kind() == SyntaxKind::TrueKeyword);
-    return std::make_shared<const LiteralExpressionSyntax>(keyword_token, value);
-
+    return std::make_shared<const LiteralExpressionSyntax>(keyword_token,
+                                                           value);
   }
+
+  if (current()->Kind() == SyntaxKind::IdentifierToken) {
+    return std::make_shared<const NameExpressionSyntax>(
+        std::make_shared<const IdentifierSyntax>(next_token()));
+  }
+
   auto number_token = match(SyntaxKind::NumberToken);
   Value value(std::stoi(number_token->Text()));
   return std::make_shared<const LiteralExpressionSyntax>(number_token, value);

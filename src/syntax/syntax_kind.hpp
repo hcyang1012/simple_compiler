@@ -18,6 +18,7 @@ enum SyntaxKind {
   PipePipeToken,
   BangToken,
   BangEqualsToken,
+  EqualsToken,
   EqualsEqualsToken,
 
   TrueKeyword,
@@ -29,6 +30,9 @@ enum SyntaxKind {
   OpenParenthesisExpression,
   CloseParenthesisExpression,
   ParenthesisExpression,
+  NameExpression,
+  AssignmentExpression,
+  Identifier,
 };
 std::string ToString(SyntaxKind kind);
 }  // namespace simple_compiler

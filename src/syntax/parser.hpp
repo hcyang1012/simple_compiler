@@ -6,16 +6,19 @@
 #include "syntax_node.hpp"
 #include "syntax_token.hpp"
 #include "syntax_tree.hpp"
+#include "../diagnostics/diagnostics_bag.hpp"
 
 namespace simple_compiler {
 class Parser {
  public:
   Parser(const std::string& text);
   std::shared_ptr<const SyntaxTree> Parse();
-  const std::vector<std::string>& Diagnostics() const;
+  const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
 
  private:
-  std::shared_ptr<const ExpressionSyntax> parse_expression(
+  std::shared_ptr<const ExpressionSyntax> parse_expression();
+  std::shared_ptr<const ExpressionSyntax> parse_assignment_expression();
+  std::shared_ptr<const ExpressionSyntax> parse_binary_expression(
       const int parent_precedence = 0);
   std::shared_ptr<const ExpressionSyntax> parse_primary_expression();
   std::shared_ptr<const ExpressionSyntax> parse_term();
@@ -28,6 +31,7 @@ class Parser {
   std::vector<std::shared_ptr<const SyntaxToken>> tokens_;
   size_t position_;
 
-  std::vector<std::string> diagnostics_;
+  std::shared_ptr<DiagnosticsBag> diagnostics_ =
+      std::make_shared<DiagnosticsBag>();
 };
 };  // namespace simple_compiler

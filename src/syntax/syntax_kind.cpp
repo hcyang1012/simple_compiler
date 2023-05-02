@@ -68,6 +68,31 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::BangToken) {
     return "BangToken";
   }
+
+  if (kind == SyntaxKind::AssignmentExpression) {
+    return "AssignmentExpression";
+  }
+
+  if (kind == SyntaxKind::Identifier) {
+    return "Identifier";
+  }
+
+  if (kind == SyntaxKind::EqualsToken) {
+    return "EqualsToken";
+  }
+
+  if (kind == SyntaxKind::EqualsEqualsToken) {
+    return "EqualsEqualsToken";
+  }
+
+  if (kind == SyntaxKind::BangEqualsToken) {
+    return "BangEqualsToken";
+  }
+
+  if (kind == SyntaxKind::NameExpression) {
+    return "NameExpression";
+  }
+
   return "BadToken";
 }
 }  // namespace simple_compiler

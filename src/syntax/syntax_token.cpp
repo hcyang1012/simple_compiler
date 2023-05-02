@@ -9,4 +9,7 @@ std::string ToString(const SyntaxToken& token) {
   return ToString(token.Kind()) + ": " + token.Text();
 }
 SyntaxKind SyntaxToken::Kind() const { return kind_; }
+TextSpan SyntaxToken::Span() const {
+  return TextSpan(position_, text_.length());
+}
 }  // namespace simple_compiler

@@ -1,15 +1,17 @@
 #include <iostream>
+#include <map>
+#include <memory>
 #include <string>
 
-#include "binding/binder.hpp"
-#include "evaluator.hpp"
+#include "compilation/compilation.hpp"
 #include "syntax/parser.hpp"
-#include "syntax/syntax_node.hpp"
-#include "syntax/syntax_tree.hpp"
+#include "syntax/value_type.hpp"
 
 void PrettyPrint(const simple_compiler::SyntaxNode& node,
                  const std::string& indent, bool is_last = true);
 int main(int argc, char** argv) {
+  auto variables =
+      std::make_shared<std::map<std::string, simple_compiler::Value>>();
   while (true) {
     std::cout << "> " << std::flush;
     std::string line;
@@ -22,28 +24,25 @@ int main(int argc, char** argv) {
 
     PrettyPrint(*(tree->Root()), "");
 
-    auto binder = simple_compiler::Binder();
-    auto bound_tree = binder.BindExpression(tree->Root());
+    simple_compiler::Compilation compilation(tree);
+    auto result = compilation.Evaluate(variables);
 
-    auto diagnostics = tree->Diagnostics();
-    diagnostics.insert(diagnostics.end(), binder.Diagnostics().begin(),
-                       binder.Diagnostics().end());
-    for (const auto& diag : diagnostics) {
-      std::cout << diag << std::endl;
+    auto diagnostics = result.Diagnostics();
+    for (const auto& diag : diagnostics->Diagnostics()) {
+      std::cout << diag.Message() << std::endl;
+      auto prefix = line.substr(0, diag.Span().Start());
+      auto error = line.substr(diag.Span().Start(), diag.Span().Length());
+      auto suffix = line.substr(diag.Span().End());
+      std::cout << prefix << "\033[1;31m" << error << "\033[0m" << suffix
+                << std::endl;
     }
-
-    auto evaluator = simple_compiler::Evaluator(bound_tree);
-    std::cout << evaluator.Evaluate().ToString() << std::endl;
+    std::cout << result.Value().ToString() << std::endl;
   }
   return 0;
 }
 
 void PrettyPrint(const simple_compiler::SyntaxNode& node,
                  const std::string& indent, bool is_last) {
-  // ├─
-  // └─
-  // │
-
   std::string new_indent = indent;
   std::cout << indent;
   if (is_last) {
