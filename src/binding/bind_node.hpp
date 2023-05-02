@@ -7,6 +7,8 @@ enum BoundNodeKind {
   BoundLiteralExpression,
   BoundUnaryExpression,
   BoundBinaryExpression,
+  BoundVariableExpression,
+  BoundAssignmentExpression
 };
 
 class BoundNode {

@@ -6,8 +6,10 @@
 #include "../syntax/value_type.hpp"
 
 namespace simple_compiler {
-Evaluator::Evaluator(const std::shared_ptr<const BoundExpressionNode>& root)
-    : root_(root), diagnostics_() {}
+Evaluator::Evaluator(
+    const std::shared_ptr<const BoundExpressionNode>& root,
+    const std::shared_ptr<std::map<std::string, Value>> variables)
+    : root_(root), variables_(variables), diagnostics_() {}
 
 Value Evaluator::Evaluate() const {
   if (root_ == nullptr) {
@@ -22,6 +24,12 @@ Value Evaluator::evaluate_expression(
     case BoundNodeKind::BoundUnaryExpression:
       return evaluate_unary_expression(
           std::static_pointer_cast<const BoundUnaryExpressionNode>(node));
+    case BoundNodeKind::BoundVariableExpression:
+      return evaluate_variable_expression(
+          std::static_pointer_cast<const BoundVariableExpressionNode>(node));
+    case BoundNodeKind::BoundAssignmentExpression:
+      return evaluate_assignment_expression(
+          std::static_pointer_cast<const BoundAssignmentExpressionNode>(node));
     case BoundNodeKind::BoundBinaryExpression:
       return evaluate_binary_expression(
           std::static_pointer_cast<const BoundBinaryExpressionNode>(node));
@@ -38,7 +46,8 @@ Value Evaluator::evaluate_unary_expression(
   auto operand = evaluate_expression(node->Operand());
   if (node->Operator()->Kind() == BoundUnaryOperatorKind::Negation) {
     return Value(-operand.AsInt());
-  } else if (node->Operator()->Kind() == BoundUnaryOperatorKind::LogicalNegation) {
+  } else if (node->Operator()->Kind() ==
+             BoundUnaryOperatorKind::LogicalNegation) {
     return Value(!operand.AsBool());
   }
   return operand;
@@ -76,6 +85,23 @@ Value Evaluator::evaluate_binary_expression(
   throw std::runtime_error("Unexpected binary operator: " +
                            node->Operator()->Kind());
   return Value(0);
+}
+
+Value Evaluator::evaluate_variable_expression(
+    const std::shared_ptr<const BoundVariableExpressionNode>& node) const {
+  auto it = variables_->find(node->Name());
+  if (it == variables_->end()) {
+    throw std::runtime_error("Variable not found: " + node->Name());
+  }
+  return it->second;
+}
+
+Value Evaluator::evaluate_assignment_expression(
+    const std::shared_ptr<const BoundAssignmentExpressionNode>& node) const {
+  auto value = evaluate_expression(node->Expression());
+  variables_->erase(node->Name());
+  variables_->insert({node->Name(), value});
+  return value;
 }
 
 };  // namespace simple_compiler

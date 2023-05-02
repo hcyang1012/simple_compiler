@@ -26,6 +26,7 @@ class DiagnosticsBag {
   void ReportUndefinedUnaryOperator(const TextSpan& span,
                                              const OperatorSyntax& op,
                                              const ValueType& operand_type);
+  void ReportUndefinedName(const TextSpan& span, const std::string& name);                                             
   const std::vector<simple_compiler::Diagnostics>& Diagnostics() const;
 
  private:

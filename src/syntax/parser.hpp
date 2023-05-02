@@ -16,7 +16,9 @@ class Parser {
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
 
  private:
-  std::shared_ptr<const ExpressionSyntax> parse_expression(
+  std::shared_ptr<const ExpressionSyntax> parse_expression();
+  std::shared_ptr<const ExpressionSyntax> parse_assignment_expression();
+  std::shared_ptr<const ExpressionSyntax> parse_binary_expression(
       const int parent_precedence = 0);
   std::shared_ptr<const ExpressionSyntax> parse_primary_expression();
   std::shared_ptr<const ExpressionSyntax> parse_term();

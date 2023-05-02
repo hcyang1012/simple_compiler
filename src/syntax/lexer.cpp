@@ -115,6 +115,8 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
       return std::make_shared<SyntaxToken>(SyntaxKind::EqualsEqualsToken,
                                            position_ - 2, "==");
     }
+    return std::make_shared<SyntaxToken>(SyntaxKind::EqualsToken, position_++,
+                                         "=");    
   }
   diagnostics_->ReportBadCharacter(position_, current_char());
   auto prev_position = position_++;

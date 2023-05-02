@@ -40,6 +40,10 @@ void DiagnosticsBag::ReportUndefinedUnaryOperator(
                                       " is not defined for type " +
                                       ToString(operand_type) + ".");
 }
+void DiagnosticsBag::ReportUndefinedName(const TextSpan& span,
+                                         const std::string& name) {
+  diagnostics_.emplace_back(span, "Variable " + name + " is not defined.");
+}
 const std::vector<simple_compiler::Diagnostics>& DiagnosticsBag::Diagnostics()
     const {
   return diagnostics_;

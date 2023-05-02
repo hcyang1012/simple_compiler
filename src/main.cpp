@@ -1,12 +1,17 @@
 #include <iostream>
+#include <map>
+#include <memory>
 #include <string>
 
 #include "compilation/compilation.hpp"
 #include "syntax/parser.hpp"
+#include "syntax/value_type.hpp"
 
 void PrettyPrint(const simple_compiler::SyntaxNode& node,
                  const std::string& indent, bool is_last = true);
 int main(int argc, char** argv) {
+  auto variables =
+      std::make_shared<std::map<std::string, simple_compiler::Value>>();
   while (true) {
     std::cout << "> " << std::flush;
     std::string line;
@@ -20,14 +25,13 @@ int main(int argc, char** argv) {
     PrettyPrint(*(tree->Root()), "");
 
     simple_compiler::Compilation compilation(tree);
-    auto result = compilation.Evaluate();
+    auto result = compilation.Evaluate(variables);
 
     auto diagnostics = result.Diagnostics();
     for (const auto& diag : diagnostics->Diagnostics()) {
       std::cout << diag.Message() << std::endl;
       auto prefix = line.substr(0, diag.Span().Start());
-      auto error = line.substr(diag.Span().Start(),
-                                         diag.Span().Length());
+      auto error = line.substr(diag.Span().Start(), diag.Span().Length());
       auto suffix = line.substr(diag.Span().End());
       std::cout << prefix << "\033[1;31m" << error << "\033[0m" << suffix
                 << std::endl;

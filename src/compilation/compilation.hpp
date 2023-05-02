@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "../evaluation/evaluation_result.hpp"
 #include "../syntax/syntax_tree.hpp"
@@ -11,7 +12,7 @@ namespace simple_compiler {
 class Compilation {
  public:
   Compilation(const std::shared_ptr<const SyntaxTree> syntax_tree);
-  EvaluationResult Evaluate();
+  EvaluationResult Evaluate(std::shared_ptr<std::map<std::string, Value>> variables);
   const std::shared_ptr<const simple_compiler::SyntaxTree> SyntaxTree() const;
 
  private:
