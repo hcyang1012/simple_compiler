@@ -18,6 +18,8 @@ class SyntaxTree {
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
   const std::shared_ptr<const SyntaxToken> EndOfFileToken() const;
 
+  static std::shared_ptr<const SyntaxTree> Parse(const std::string& text);
+
  private:
   const std::shared_ptr<const ExpressionSyntax> root_;
   const std::shared_ptr<const DiagnosticsBag> diagnostics_;

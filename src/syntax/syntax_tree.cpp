@@ -1,6 +1,9 @@
 #include "syntax_tree.hpp"
+
 #include <memory>
+
 #include "../diagnostics/diagnostics_bag.hpp"
+#include "parser.hpp"
 namespace simple_compiler {
 SyntaxTree::SyntaxTree(
     const std::shared_ptr<const ExpressionSyntax> root,
@@ -16,6 +19,11 @@ const std::shared_ptr<const ExpressionSyntax> SyntaxTree::Root() const {
 
 const std::shared_ptr<const DiagnosticsBag> SyntaxTree::Diagnostics() const {
   return diagnostics_;
+}
+
+std::shared_ptr<const SyntaxTree> SyntaxTree::Parse(const std::string& text) {
+  Parser parser(text);
+  return parser.Parse();
 }
 
 }  // namespace simple_compiler

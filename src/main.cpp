@@ -4,8 +4,8 @@
 #include <string>
 
 #include "compilation/compilation.hpp"
-#include "syntax/parser.hpp"
 #include "syntax/value_type.hpp"
+#include "syntax/syntax_tree.hpp"
 
 void PrettyPrint(const simple_compiler::SyntaxNode& node,
                  const std::string& indent, bool is_last = true);
@@ -19,8 +19,7 @@ int main(int argc, char** argv) {
     if (line.length() == 0) {
       break;
     }
-    auto parser = simple_compiler::Parser(line);
-    auto tree = parser.Parse();
+    auto tree = simple_compiler::SyntaxTree::Parse(line);
 
     PrettyPrint(*(tree->Root()), "");
 
