@@ -1,4 +1,4 @@
-#include "text_span.hpp"
+#include "../text/text_span.hpp"
 
 #include <cstddef>
 namespace simple_compiler {
