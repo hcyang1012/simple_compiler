@@ -28,7 +28,7 @@ namespace simple_compiler {
  *  1   2
  */
 
-Parser::Parser(const std::string& text) : position_(0) {
+Parser::Parser(const TextSource& text) : text_(text), position_(0) {
   tokens_.clear();
   Lexer lexer(text);
   std::shared_ptr<SyntaxToken> token = nullptr;
@@ -65,7 +65,8 @@ std::shared_ptr<const SyntaxToken> Parser::match(const SyntaxKind kind) {
 std::shared_ptr<const SyntaxTree> Parser::Parse() {
   auto expression = parse_expression();
   auto eofToken = match(SyntaxKind::EndOfFileToken);
-  return std::make_shared<const SyntaxTree>(expression, diagnostics_, eofToken);
+  return std::make_shared<const SyntaxTree>(text_, expression, diagnostics_,
+                                            eofToken);
 }
 std::shared_ptr<const ExpressionSyntax> Parser::parse_factor() {
   auto left = parse_primary_expression();
@@ -158,7 +159,12 @@ std::shared_ptr<const ExpressionSyntax> Parser::parse_primary_expression() {
   }
 
   auto number_token = match(SyntaxKind::NumberToken);
-  Value value(std::stoi(number_token->Text()));
+  int number_value = 0;
+  try {
+    number_value = std::stoi(number_token->Text());
+  } catch (const std::exception& e) {
+  }
+  Value value(number_value);
   return std::make_shared<const LiteralExpressionSyntax>(number_token, value);
 }
 

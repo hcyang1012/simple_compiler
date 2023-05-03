@@ -6,7 +6,7 @@
 #include "../diagnostics/diagnostics_bag.hpp"
 
 namespace simple_compiler {
-Lexer::Lexer(const std::string& text) : text_(text), position_(0) {}
+Lexer::Lexer(const TextSource& text) : text_(text), position_(0) {}
 
 const std::shared_ptr<const DiagnosticsBag> Lexer::Diagnostics() const {
   return diagnostics_;
@@ -24,7 +24,7 @@ const std::shared_ptr<const DiagnosticsBag> Lexer::Diagnostics() const {
  * @return std::shared_ptr<SyntaxToken>
  */
 std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
-  if (position_ >= text_.length()) {
+  if (position_ >= text_.Length()) {
     return std::make_shared<SyntaxToken>(SyntaxKind::EndOfFileToken, position_,
                                          "\0");
   }
@@ -34,7 +34,7 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
       next();
     }
     size_t length = position_ - start;
-    std::string text = text_.substr(start, length);
+    std::string text = text_.ToString(start, length);
     return std::make_shared<SyntaxToken>(SyntaxKind::NumberToken, start, text);
   }
 
@@ -44,7 +44,7 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
       next();
     }
     size_t length = position_ - start;
-    std::string text = text_.substr(start, length);
+    std::string text = text_.ToString(start, length);
     return std::make_shared<SyntaxToken>(SyntaxKind::WhiteSpaceToken, start,
                                          text);
   }
@@ -55,7 +55,7 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
       next();
     }
     size_t length = position_ - start;
-    std::string text = text_.substr(start, length);
+    std::string text = text_.ToString(start, length);
     auto kind = SyntaxFact::GetKeywordKind(text);
     return std::make_shared<SyntaxToken>(kind, start, text);
   }
@@ -116,18 +116,18 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
                                            position_ - 2, "==");
     }
     return std::make_shared<SyntaxToken>(SyntaxKind::EqualsToken, position_++,
-                                         "=");    
+                                         "=");
   }
   diagnostics_->ReportBadCharacter(position_, current_char());
   auto prev_position = position_++;
   return std::make_shared<SyntaxToken>(SyntaxKind::BadToken, prev_position,
-                                       text_.substr(position_ - 1, 1));
+                                       text_.ToString(position_ - 1, 1));
 }
 char Lexer::current_char() const { return peek(0); }
 char Lexer::lookahead() const { return peek(1); }
 char Lexer::peek(const size_t offset) const {
   size_t position = position_ + offset;
-  if (position >= text_.length()) {
+  if (position >= text_.Length()) {
     return '\0';
   }
   return text_[position];

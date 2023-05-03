@@ -7,17 +7,18 @@
 #include <vector>
 
 #include "syntax_token.hpp"
+#include "../text/text_source.hpp"
 #include "../diagnostics/diagnostics_bag.hpp"
 
 namespace simple_compiler {
 class Lexer {
  public:
-  Lexer(const std::string& text);
+  Lexer(const TextSource& text);
   std::shared_ptr<SyntaxToken> NextToken();
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
 
  private:
-  const std::string text_;
+  const TextSource text_;
   size_t position_;
 
   std::shared_ptr<DiagnosticsBag> diagnostics_ =

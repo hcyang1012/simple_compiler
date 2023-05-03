@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include "text_span.hpp"
+#include "../text/text_span.hpp"
 namespace simple_compiler {
 class Diagnostics {
  public:
