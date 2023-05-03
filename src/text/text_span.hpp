@@ -6,6 +6,7 @@ class TextSpan {
  public:
   TextSpan(const size_t start, const size_t length);
   TextSpan(const TextSpan& other) = default;
+  static TextSpan FromBounds(const size_t start, const size_t end);
 
   TextSpan& operator=(const TextSpan& other) = default;
   size_t Start() const;

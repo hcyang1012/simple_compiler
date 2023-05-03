@@ -7,15 +7,16 @@
 #include "syntax_token.hpp"
 #include "syntax_tree.hpp"
 #include "../diagnostics/diagnostics_bag.hpp"
-
+#include "../text/text_source.hpp"
 namespace simple_compiler {
 class Parser {
  public:
-  Parser(const std::string& text);
+  Parser(const TextSource& text);
   std::shared_ptr<const SyntaxTree> Parse();
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
 
  private:
+  const TextSource text_;
   std::shared_ptr<const ExpressionSyntax> parse_expression();
   std::shared_ptr<const ExpressionSyntax> parse_assignment_expression();
   std::shared_ptr<const ExpressionSyntax> parse_binary_expression(
