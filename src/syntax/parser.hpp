@@ -6,13 +6,14 @@
 #include "syntax_node.hpp"
 #include "syntax_token.hpp"
 #include "syntax_tree.hpp"
+#include "compilation_unit_syntax.hpp"
 #include "../diagnostics/diagnostics_bag.hpp"
 #include "../text/text_source.hpp"
 namespace simple_compiler {
 class Parser {
  public:
   Parser(const TextSource& text);
-  std::shared_ptr<const SyntaxTree> Parse();
+  std::shared_ptr<const CompilationUnitSyntax> ParseCompilationUnit();
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
 
  private:

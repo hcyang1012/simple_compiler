@@ -8,15 +8,14 @@
 #include "../text/text_source.hpp"
 #include "syntax_node.hpp"
 #include "syntax_token.hpp"
+#include "compilation_unit_syntax.hpp"
+
 namespace simple_compiler {
 class SyntaxTree {
  public:
-  SyntaxTree(const TextSource& text,
-             const std::shared_ptr<const ExpressionSyntax> root,
-             const std::shared_ptr<const DiagnosticsBag> diagnostics,
-             const std::shared_ptr<const SyntaxToken> end_of_file_token);
+  SyntaxTree(const TextSource& text);
 
-  const std::shared_ptr<const ExpressionSyntax> Root() const;
+  const std::shared_ptr<const CompilationUnitSyntax> Root() const;
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
   const std::shared_ptr<const SyntaxToken> EndOfFileToken() const;
 
@@ -26,8 +25,8 @@ class SyntaxTree {
 
  private:
   const TextSource text_;
-  const std::shared_ptr<const ExpressionSyntax> root_;
-  const std::shared_ptr<const DiagnosticsBag> diagnostics_;
-  const std::shared_ptr<const SyntaxToken> end_of_file_token_;
+  std::shared_ptr<const CompilationUnitSyntax> root_;
+  std::shared_ptr<const DiagnosticsBag> diagnostics_;
+  std::shared_ptr<const SyntaxToken> end_of_file_token_;
 };
 }  // namespace simple_compiler

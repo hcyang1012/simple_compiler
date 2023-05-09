@@ -24,6 +24,8 @@ enum SyntaxKind {
   TrueKeyword,
   FalseKeyword,
 
+  CompilationUnit,
+
   LiteralExpression,
   UnaryExpression,
   BinaryExpression,

@@ -12,6 +12,8 @@
 #include "../syntax/parenthesis_expression_syntax.hpp"
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/unary_expression_syntax.hpp"
+#include "../syntax/compilation_unit_syntax.hpp"
+
 #include "binding/bind_node.hpp"
 #include "binding/bound_binary_expression.hpp"
 #include "binding/bound_literal_expression.hpp"

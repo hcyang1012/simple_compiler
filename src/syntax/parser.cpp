@@ -62,11 +62,10 @@ std::shared_ptr<const SyntaxToken> Parser::match(const SyntaxKind kind) {
   return std::make_shared<const SyntaxToken>(kind, current()->Position(), "");
 }
 
-std::shared_ptr<const SyntaxTree> Parser::Parse() {
+std::shared_ptr<const CompilationUnitSyntax> Parser::ParseCompilationUnit() {
   auto expression = parse_expression();
   auto eofToken = match(SyntaxKind::EndOfFileToken);
-  return std::make_shared<const SyntaxTree>(text_, expression, diagnostics_,
-                                            eofToken);
+  return std::make_shared<const CompilationUnitSyntax>(expression, eofToken);
 }
 std::shared_ptr<const ExpressionSyntax> Parser::parse_factor() {
   auto left = parse_primary_expression();

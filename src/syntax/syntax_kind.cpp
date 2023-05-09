@@ -93,6 +93,10 @@ std::string ToString(SyntaxKind kind) {
     return "NameExpression";
   }
 
+  if(kind == SyntaxKind::CompilationUnit){
+    return "CompilationUnit";
+  }
+
   return "BadToken";
 }
 }  // namespace simple_compiler

@@ -27,6 +27,7 @@ set(SOURCES
   ${SRC_DIR}/syntax/name_expression_syntax.cpp
   ${SRC_DIR}/syntax/assignment_expression_syntax.cpp
   ${SRC_DIR}/syntax/identifier_syntax.cpp
+  ${SRC_DIR}/syntax/compilation_unit_syntax.cpp
 
   ${SRC_DIR}/binding/bind_node.cpp
   ${SRC_DIR}/binding/binder.cpp
