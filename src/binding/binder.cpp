@@ -1,6 +1,7 @@
 #include "binder.hpp"
 
 #include <memory>
+#include <stack>
 #include <stdexcept>
 
 #include "../syntax/assignment_expression_syntax.hpp"
@@ -10,14 +11,17 @@
 #include "../syntax/value_type.hpp"
 #include "bound_assignment_expression.hpp"
 #include "bound_binary_expression.hpp"
+#include "bound_global_scope.hpp"
 #include "bound_literal_expression.hpp"
+#include "bound_scope.hpp"
 #include "bound_unary_expression.hpp"
 #include "bound_unary_operator.hpp"
 #include "bound_variable_expression.hpp"
 
 namespace simple_compiler {
-Binder::Binder(const std::shared_ptr<std::map<std::string, Value>> variables)
-    : variables_(variables) {}
+Binder::Binder(std::shared_ptr<const BoundScope> parent) {
+  scope_ = std::make_shared<BoundScope>(parent);
+}
 
 std::shared_ptr<BoundExpressionNode> Binder::BindExpression(
     const std::shared_ptr<const ExpressionSyntax> syntax) {
@@ -49,6 +53,42 @@ std::shared_ptr<BoundExpressionNode> Binder::BindExpression(
 
 const std::shared_ptr<const DiagnosticsBag> Binder::Diagnostics() const {
   return diagnostics_;
+}
+
+std::shared_ptr<const BoundScope> Binder::Scope() const { return scope_; }
+
+std::shared_ptr<const BoundGlobalScope> Binder::BindGlobalScope(
+    std::shared_ptr<const BoundGlobalScope> previous,
+    std::shared_ptr<const CompilationUnitSyntax> syntax) {
+  auto parent_scope = CreateParentScope(previous);
+  auto binder = std::make_shared<Binder>(parent_scope);
+  auto expression = binder->BindExpression(syntax->Expression());
+  auto variables = binder->Scope()->GetDeclaredVariables();
+  auto diagnostics = binder->Diagnostics();
+  return std::make_shared<BoundGlobalScope>(previous, diagnostics, variables,
+                                            expression);
+}
+
+std::shared_ptr<const BoundScope> Binder::CreateParentScope(
+    std::shared_ptr<const BoundGlobalScope> previous) {
+  std::stack<std::shared_ptr<const BoundGlobalScope>> stack;
+
+  auto current = previous;
+  while (current != nullptr) {
+    stack.push(current);
+    current = current->Previous();
+  }
+  std::shared_ptr<BoundScope> parent = nullptr;
+  while (!stack.empty()) {
+    auto previous = stack.top();
+    stack.pop();
+    auto scope = std::make_shared<BoundScope>(parent);
+    for (auto variable : previous->Variables()) {
+      scope->TryDeclare(variable);
+    }
+    parent = scope;
+  }
+  return parent;
 }
 
 std::shared_ptr<BoundExpressionNode> Binder::bind_literal_expression(
@@ -161,31 +201,31 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_parenthesized_expression(
 std::shared_ptr<BoundExpressionNode> Binder::bind_name_expression(
     const std::shared_ptr<const NameExpressionSyntax> syntax) {
   const std::string kVariableName = syntax->GetIdentifierNode()->ValueText();
-  auto variable = variables_->find(kVariableName);
-  if (variable == variables_->end()) {
+  auto variable = scope_->TryLookup(kVariableName);
+  if (variable == nullptr) {
     diagnostics_->ReportUndefinedName(syntax->GetIdentifierNode()->Span(),
                                       kVariableName);
     return std::make_shared<BoundLiteralExpressionNode>(Value(0));
   }
   return std::make_shared<BoundVariableExpressionNode>(kVariableName,
-                                                       variable->second.Type());
+                                                       variable->Type());
 }
 
 std::shared_ptr<BoundExpressionNode> Binder::bind_assignment_expression(
     std::shared_ptr<const AssignmentExpressionSyntax> syntax) {
   auto name = syntax->GetIdentifierToken()->ValueText();
   auto expression = BindExpression(syntax->GetExpression());
+  auto default_value = Value::Build(expression->Type());
 
-  switch (expression->Type()) {
-    case ValueType::Int:
-      variables_->insert({name, Value(0)});
-      break;
-    case ValueType::Boolean:
-      variables_->insert({name, Value(false)});
-      break;
-    default:
-      throw std::runtime_error("Unexpected value type: " +
-                               ToString(expression->Type()));
+  auto variable = scope_->TryLookup(name);
+  if(variable == nullptr){
+    variable = std::make_shared<VariableSymbol>(name, default_value);
+    scope_->TryDeclare(variable);
+  }
+
+  if(variable->Type() != expression->Type()){
+    diagnostics_->ReportCannotConvert(syntax->GetExpression()->Span(), variable->Type(), expression->Type());
+    return expression;
   }
 
   return std::make_shared<BoundAssignmentExpressionNode>(name, expression);

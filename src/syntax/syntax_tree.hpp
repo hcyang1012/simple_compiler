@@ -15,9 +15,9 @@ class SyntaxTree {
  public:
   SyntaxTree(const TextSource& text);
 
-  const std::shared_ptr<const CompilationUnitSyntax> Root() const;
-  const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
-  const std::shared_ptr<const SyntaxToken> EndOfFileToken() const;
+  std::shared_ptr<const CompilationUnitSyntax> Root() const;
+  std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
+  std::shared_ptr<const SyntaxToken> EndOfFileToken() const;
 
   const TextSource& Text() const;
 

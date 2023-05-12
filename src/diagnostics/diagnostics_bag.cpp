@@ -44,6 +44,16 @@ void DiagnosticsBag::ReportUndefinedName(const TextSpan& span,
                                          const std::string& name) {
   diagnostics_.emplace_back(span, "Variable " + name + " is not defined.");
 }
+void DiagnosticsBag::ReportVariableAlreadyDeclared(const TextSpan& span,
+                                                   const std::string& name) {
+  diagnostics_.emplace_back(span, "Variable " + name + " is already declared.");
+}
+void DiagnosticsBag::ReportCannotConvert(const TextSpan& span,
+                                         const ValueType& from_type,
+                                         const ValueType& to_type) {
+  diagnostics_.emplace_back(span, "Cannot convert type " + ToString(from_type) +
+                                      " to " + ToString(to_type) + ".");
+}
 const std::vector<simple_compiler::Diagnostics>& DiagnosticsBag::Diagnostics()
     const {
   return diagnostics_;

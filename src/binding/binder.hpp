@@ -7,30 +7,39 @@
 #include "../diagnostics/diagnostics_bag.hpp"
 #include "../syntax/assignment_expression_syntax.hpp"
 #include "../syntax/binary_expression_syntax.hpp"
+#include "../syntax/compilation_unit_syntax.hpp"
 #include "../syntax/literal_expression_syntax.hpp"
 #include "../syntax/name_expression_syntax.hpp"
 #include "../syntax/parenthesis_expression_syntax.hpp"
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/unary_expression_syntax.hpp"
-#include "../syntax/compilation_unit_syntax.hpp"
-
-#include "binding/bind_node.hpp"
-#include "binding/bound_binary_expression.hpp"
-#include "binding/bound_literal_expression.hpp"
-#include "binding/bound_unary_expression.hpp"
+#include "bind_node.hpp"
+#include "bound_binary_expression.hpp"
+#include "bound_global_scope.hpp"
+#include "bound_literal_expression.hpp"
+#include "bound_scope.hpp"
+#include "bound_unary_expression.hpp"
 namespace simple_compiler {
 class Binder {
  public:
-  Binder(const std::shared_ptr<std::map<std::string, Value>> variables);
+  Binder(std::shared_ptr<const BoundScope> parent);
   std::shared_ptr<BoundExpressionNode> BindExpression(
       const std::shared_ptr<const ExpressionSyntax> syntax);
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
+  std::shared_ptr<const BoundScope> Scope() const;
+
+  static std::shared_ptr<const BoundGlobalScope> BindGlobalScope(
+      std::shared_ptr<const BoundGlobalScope> previous,
+      std::shared_ptr<const CompilationUnitSyntax> syntax);
+
+  static std::shared_ptr<const BoundScope> CreateParentScope(
+      std::shared_ptr<const BoundGlobalScope> previous);
 
  private:
   const std::shared_ptr<DiagnosticsBag> diagnostics_ =
       std::make_shared<DiagnosticsBag>();
 
-  const std::shared_ptr<std::map<std::string, Value>> variables_;
+  std::shared_ptr<BoundScope> scope_ = nullptr;
 
   std::shared_ptr<BoundExpressionNode> bind_literal_expression(
       const std::shared_ptr<const LiteralExpressionSyntax> syntax);

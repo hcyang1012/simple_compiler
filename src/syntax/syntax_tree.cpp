@@ -14,11 +14,11 @@ SyntaxTree::SyntaxTree(const TextSource& text) : text_(text) {
   diagnostics_ = diagnostics;
 }
 
-const std::shared_ptr<const CompilationUnitSyntax> SyntaxTree::Root() const {
+std::shared_ptr<const CompilationUnitSyntax> SyntaxTree::Root() const {
   return root_;
 }
 
-const std::shared_ptr<const DiagnosticsBag> SyntaxTree::Diagnostics() const {
+std::shared_ptr<const DiagnosticsBag> SyntaxTree::Diagnostics() const {
   return diagnostics_;
 }
 
