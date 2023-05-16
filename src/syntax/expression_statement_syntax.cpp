@@ -17,4 +17,8 @@ SyntaxKind ExpressionStatementSyntax::Kind() const {
 std::string ExpressionStatementSyntax::ValueText() const {
   return expression_->ValueText();
 }
+std::vector<std::shared_ptr<const SyntaxNode>>
+ExpressionStatementSyntax::GetChildren() const {
+  return {expression_};
+}
 }  // namespace simple_compiler

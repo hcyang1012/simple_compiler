@@ -18,6 +18,7 @@ class BlockStatementSyntax : public StatementSyntax {
   std::shared_ptr<const OpenBraceSyntax> OpenBraceToken() const;
   const std::vector<std::shared_ptr<const StatementSyntax>>& Statements() const;
   std::shared_ptr<const CloseBraceSyntax> CloseBraceToken() const;
+  std::vector<std::shared_ptr<const SyntaxNode>> GetChildren() const override;
 
  private:
   const std::shared_ptr<const OpenBraceSyntax> open_brace_token_;
