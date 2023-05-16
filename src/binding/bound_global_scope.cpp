@@ -6,11 +6,11 @@ BoundGlobalScope::BoundGlobalScope(
     std::shared_ptr<const BoundGlobalScope> previous,
     std::shared_ptr<const simple_compiler::DiagnosticsBag> diagnostics,
     const std::vector<std::shared_ptr<const VariableSymbol>>& variables,
-    std::shared_ptr<const BoundExpressionNode> expression)
+    std::shared_ptr<const BoundStatementNode> statement)
     : previous_(previous),
       diagnostics_(diagnostics),
       variables_(variables),
-      expression_(expression) {}
+      statement_(statement) {}
 
 std::shared_ptr<const BoundGlobalScope> BoundGlobalScope::Previous() const {
   return previous_;
@@ -26,9 +26,9 @@ BoundGlobalScope::Variables() const {
   return variables_;
 }
 
-std::shared_ptr<const BoundExpressionNode> BoundGlobalScope::Expression()
+std::shared_ptr<const BoundStatementNode> BoundGlobalScope::Statement()
     const {
-  return expression_;
+  return statement_;
 }
 
 }  // namespace simple_compiler

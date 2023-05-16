@@ -8,7 +8,10 @@ enum BoundNodeKind {
   BoundUnaryExpression,
   BoundBinaryExpression,
   BoundVariableExpression,
-  BoundAssignmentExpression
+  BoundAssignmentExpression,
+
+  BoundBlockStatement,
+  BoundExpressionStatement  
 };
 
 class BoundNode {
@@ -22,5 +25,6 @@ class BoundExpressionNode : public BoundNode {
  private:
 };
 
+class BoundStatementNode : public BoundNode {};
 
 }  // namespace simple_compiler

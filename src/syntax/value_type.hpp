@@ -7,6 +7,7 @@ enum ValueType {
 };
 class Value {
  public:
+  Value(const Value& other);
   explicit Value(int value);
   explicit Value(bool value);
   static Value Build(const ValueType type);

@@ -6,6 +6,9 @@
 #include "syntax_node.hpp"
 #include "syntax_token.hpp"
 #include "syntax_tree.hpp"
+#include "syntax_statement.hpp"
+#include "expression_statement_syntax.hpp"
+#include "block_statement_syntax.hpp"
 #include "compilation_unit_syntax.hpp"
 #include "../diagnostics/diagnostics_bag.hpp"
 #include "../text/text_source.hpp"
@@ -18,6 +21,9 @@ class Parser {
 
  private:
   const TextSource text_;
+  std::shared_ptr<const StatementSyntax> parse_statement();
+  std::shared_ptr<const BlockStatementSyntax> parse_block_statement();
+  std::shared_ptr<const ExpressionStatementSyntax> parse_expression_statement();
   std::shared_ptr<const ExpressionSyntax> parse_expression();
   std::shared_ptr<const ExpressionSyntax> parse_assignment_expression();
   std::shared_ptr<const ExpressionSyntax> parse_binary_expression(

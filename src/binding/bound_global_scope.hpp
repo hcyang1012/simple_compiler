@@ -14,16 +14,16 @@ class BoundGlobalScope {
       std::shared_ptr<const BoundGlobalScope> previous,
       std::shared_ptr<const DiagnosticsBag> diagnostics,
       const std::vector<std::shared_ptr<const VariableSymbol>>& variables,
-      std::shared_ptr<const BoundExpressionNode> expression);
+      std::shared_ptr<const BoundStatementNode> statement);
   std::shared_ptr<const BoundGlobalScope> Previous() const;
   std::shared_ptr<const simple_compiler::DiagnosticsBag> Diagnostics() const;
   const std::vector<std::shared_ptr<const VariableSymbol>>& Variables() const;
-  std::shared_ptr<const BoundExpressionNode> Expression() const;
+  std::shared_ptr<const BoundStatementNode> Statement() const;
 
  private:
   std::shared_ptr<const BoundGlobalScope> previous_;
   std::shared_ptr<const simple_compiler::DiagnosticsBag> diagnostics_;
   std::vector<std::shared_ptr<const VariableSymbol>> variables_;
-  std::shared_ptr<const BoundExpressionNode> expression_;
+  std::shared_ptr<const BoundStatementNode> statement_;
 };
 }  // namespace simple_compiler

@@ -43,6 +43,15 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::ParenthesisExpression) {
     return "ParenthesisExpression";
   }
+
+  if (kind == SyntaxKind::OpenBraceToken) {
+    return "OpenBraceToken";
+  }
+
+  if (kind == SyntaxKind::CloseBraceToken) {
+    return "CloseBraceToken";
+  }
+
   if (kind == SyntaxKind::UnaryExpression) {
     return "UnaryExpression";
   }
@@ -93,8 +102,24 @@ std::string ToString(SyntaxKind kind) {
     return "NameExpression";
   }
 
-  if(kind == SyntaxKind::CompilationUnit){
+  if (kind == SyntaxKind::CompilationUnit) {
     return "CompilationUnit";
+  }
+
+  if (kind == SyntaxKind::BlockStatement) {
+    return "BlockStatement";
+  }
+
+  if (kind == SyntaxKind::ExpressionStatement) {
+    return "ExpressionStatement";
+  }
+
+  if (kind == SyntaxKind::OpenBraceExpression) {
+    return "OpenBraceExpression";
+  }
+
+  if (kind == SyntaxKind::CloseBraceExpression) {
+    return "CloseBraceExpression";
   }
 
   return "BadToken";

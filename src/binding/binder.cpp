@@ -23,7 +23,22 @@ Binder::Binder(std::shared_ptr<const BoundScope> parent) {
   scope_ = std::make_shared<BoundScope>(parent);
 }
 
-std::shared_ptr<BoundExpressionNode> Binder::BindExpression(
+std::shared_ptr<BoundStatementNode> Binder::BindStatement(
+    const std::shared_ptr<const StatementSyntax> syntax) {
+  switch (syntax->Kind()) {
+    case SyntaxKind::BlockStatement:
+      return bind_block_statement(
+          std::static_pointer_cast<const BlockStatementSyntax>(syntax));
+    case SyntaxKind::ExpressionStatement:
+      return bind_expression_statement(
+          std::static_pointer_cast<const ExpressionStatementSyntax>(syntax));
+    default:
+      throw std::runtime_error("Unexpected syntax kind: " +
+                               ToString(syntax->Kind()));
+  }
+}
+
+std::shared_ptr<BoundExpressionNode> Binder::bind_expression(
     const std::shared_ptr<const ExpressionSyntax> syntax) {
   switch (syntax->Kind()) {
     case SyntaxKind::LiteralExpression:
@@ -62,11 +77,11 @@ std::shared_ptr<const BoundGlobalScope> Binder::BindGlobalScope(
     std::shared_ptr<const CompilationUnitSyntax> syntax) {
   auto parent_scope = CreateParentScope(previous);
   auto binder = std::make_shared<Binder>(parent_scope);
-  auto expression = binder->BindExpression(syntax->Expression());
+  auto statement = binder->BindStatement(syntax->Statement());
   auto variables = binder->Scope()->GetDeclaredVariables();
   auto diagnostics = binder->Diagnostics();
   return std::make_shared<BoundGlobalScope>(previous, diagnostics, variables,
-                                            expression);
+                                            statement);
 }
 
 std::shared_ptr<const BoundScope> Binder::CreateParentScope(
@@ -91,6 +106,21 @@ std::shared_ptr<const BoundScope> Binder::CreateParentScope(
   return parent;
 }
 
+std::shared_ptr<BoundBlockStatementNode> Binder::bind_block_statement(
+    const std::shared_ptr<const BlockStatementSyntax> syntax) {
+  auto statements = std::vector<std::shared_ptr<const BoundStatementNode>>();
+  for (auto statement : syntax->Statements()) {
+    statements.push_back(BindStatement(statement));
+  }
+  return std::make_shared<BoundBlockStatementNode>(statements);
+}
+
+std::shared_ptr<BoundExpressionStatementNode> Binder::bind_expression_statement(
+    const std::shared_ptr<const ExpressionStatementSyntax> syntax) {
+  auto expression = bind_expression(syntax->Expression());
+  return std::make_shared<BoundExpressionStatementNode>(expression);
+}
+
 std::shared_ptr<BoundExpressionNode> Binder::bind_literal_expression(
     const std::shared_ptr<const LiteralExpressionSyntax> syntax) {
   std::shared_ptr<Value> value;
@@ -106,8 +136,8 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_literal_expression(
 
 std::shared_ptr<BoundExpressionNode> Binder::bind_binary_expression(
     const std::shared_ptr<const BinaryExpressionSyntax> syntax) {
-  auto bound_left = BindExpression(syntax->Left());
-  auto bound_right = BindExpression(syntax->Right());
+  auto bound_left = bind_expression(syntax->Left());
+  auto bound_right = bind_expression(syntax->Right());
   auto bound_operator = BoundBinaryOperatorNode::Bind(
       syntax->Operator()->Kind(), bound_left->Type(), bound_right->Type());
   if (bound_operator == nullptr) {
@@ -122,7 +152,7 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_binary_expression(
 
 std::shared_ptr<BoundExpressionNode> Binder::bind_unary_expression(
     const std::shared_ptr<const UnaryExpressionSyntax> syntax) {
-  auto bound_operand = BindExpression(syntax->Operand());
+  auto bound_operand = bind_expression(syntax->Operand());
   auto bound_operator = BoundUnaryOperatorNode::Bind(syntax->Operator()->Kind(),
                                                      bound_operand->Type());
   if (bound_operator == nullptr) {
@@ -195,7 +225,7 @@ std::shared_ptr<BoundBinaryOperatorKind> Binder::bind_binary_operator_kind(
 
 std::shared_ptr<BoundExpressionNode> Binder::bind_parenthesized_expression(
     const std::shared_ptr<const ParenthesizedExpressionSyntax> syntax) {
-  return BindExpression(syntax->Expression());
+  return bind_expression(syntax->Expression());
 }
 
 std::shared_ptr<BoundExpressionNode> Binder::bind_name_expression(
@@ -214,17 +244,18 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_name_expression(
 std::shared_ptr<BoundExpressionNode> Binder::bind_assignment_expression(
     std::shared_ptr<const AssignmentExpressionSyntax> syntax) {
   auto name = syntax->GetIdentifierToken()->ValueText();
-  auto expression = BindExpression(syntax->GetExpression());
+  auto expression = bind_expression(syntax->GetExpression());
   auto default_value = Value::Build(expression->Type());
 
   auto variable = scope_->TryLookup(name);
-  if(variable == nullptr){
+  if (variable == nullptr) {
     variable = std::make_shared<VariableSymbol>(name, default_value);
     scope_->TryDeclare(variable);
   }
 
-  if(variable->Type() != expression->Type()){
-    diagnostics_->ReportCannotConvert(syntax->GetExpression()->Span(), variable->Type(), expression->Type());
+  if (variable->Type() != expression->Type()) {
+    diagnostics_->ReportCannotConvert(syntax->GetExpression()->Span(),
+                                      variable->Type(), expression->Type());
     return expression;
   }
 

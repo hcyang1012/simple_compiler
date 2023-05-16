@@ -3,6 +3,8 @@
 #include <stdexcept>
 
 namespace simple_compiler {
+Value::Value(const Value& other) : type_(other.type_), data_(other.data_) {}
+
 Value::Value(int value) : type_(ValueType::Int), data_({.int_ = value}) {}
 Value::Value(bool value)
     : type_(ValueType::Boolean), data_({.boolean_ = value}) {}

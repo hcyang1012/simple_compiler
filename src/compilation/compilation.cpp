@@ -25,7 +25,7 @@ EvaluationResult Compilation::Evaluate(
   diagnostics->AddRange(*(GlobalScope()->Diagnostics()));
 
   auto evaluator =
-      std::make_unique<Evaluator>(global_scope_->Expression(), variables);
+      std::make_unique<Evaluator>(global_scope_->Statement(), variables);
   auto value = evaluator->Evaluate();
   return EvaluationResult(diagnostics, value);
 }
