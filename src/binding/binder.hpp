@@ -15,6 +15,7 @@
 #include "../syntax/parenthesis_expression_syntax.hpp"
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/unary_expression_syntax.hpp"
+#include "../syntax/syntax_variable_declaration.hpp"
 #include "bind_node.hpp"
 
 #include "bound_block_statement.hpp"
@@ -24,11 +25,12 @@
 #include "bound_scope.hpp"
 #include "bound_unary_expression.hpp"
 #include "bound_expression_statement.hpp"
+#include "bound_variable_declaration.hpp"
 
 namespace simple_compiler {
 class Binder {
  public:
-  Binder(std::shared_ptr<const BoundScope> parent);
+  Binder(std::shared_ptr<BoundScope> parent);
   std::shared_ptr<BoundStatementNode> BindStatement(
       const std::shared_ptr<const StatementSyntax> syntax);
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
@@ -38,7 +40,7 @@ class Binder {
       std::shared_ptr<const BoundGlobalScope> previous,
       std::shared_ptr<const CompilationUnitSyntax> syntax);
 
-  static std::shared_ptr<const BoundScope> CreateParentScope(
+  static std::shared_ptr<BoundScope> CreateParentScope(
       std::shared_ptr<const BoundGlobalScope> previous);
 
  private:
@@ -51,11 +53,13 @@ class Binder {
       const std::shared_ptr<const BlockStatementSyntax> syntax);
   std::shared_ptr<BoundExpressionStatementNode> bind_expression_statement(
       const std::shared_ptr<const ExpressionStatementSyntax> syntax);
+  std::shared_ptr<BoundVariableDeclarationNode> bind_variable_declaration(
+      const std::shared_ptr<const VariableDeclarationSyntax> syntax);
 
 
   std::shared_ptr<BoundExpressionNode> bind_expression(
       const std::shared_ptr<const ExpressionSyntax> syntax);
-      
+
   std::shared_ptr<BoundExpressionNode> bind_literal_expression(
       const std::shared_ptr<const LiteralExpressionSyntax> syntax);
   std::shared_ptr<BoundExpressionNode> bind_binary_expression(

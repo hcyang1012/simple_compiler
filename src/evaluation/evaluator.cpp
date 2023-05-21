@@ -34,12 +34,25 @@ void Evaluator::evaluate_expression_statement(
   last_value_ = std::make_shared<const Value>(
       evaluate_expression(statement->Expression()));
 }
+
+void Evaluator::evaluate_variable_declaration(
+    const std::shared_ptr<const BoundVariableDeclarationNode> statement) {
+  const auto& name = statement->Variable()->Name();
+  const auto& value = evaluate_expression(statement->Initializer());
+  variables_->insert_or_assign(name, value);
+  last_value_ = std::make_shared<const Value>(value);
+}
+
 void Evaluator::evaluate_statement(
     const std::shared_ptr<const BoundStatementNode> statement) {
   switch (statement->Kind()) {
     case BoundNodeKind::BoundBlockStatement:
       return evaluate_block_statement(
           std::static_pointer_cast<const BoundBlockStatementNode>(statement));
+    case BoundNodeKind::BoundVariableDeclarationStatement:
+      return evaluate_variable_declaration(
+          std::static_pointer_cast<const BoundVariableDeclarationNode>(
+              statement));
     case BoundNodeKind::BoundExpressionStatement:
       return evaluate_expression_statement(
           std::static_pointer_cast<const BoundExpressionStatementNode>(

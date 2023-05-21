@@ -62,6 +62,15 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::FalseKeyword) {
     return "FalseKeyword";
   }
+
+  if (kind == SyntaxKind::LetKeyword) {
+    return "LetKeyword";
+  }
+
+  if (kind == SyntaxKind::VarKeyword) {
+    return "VarKeyword";
+  }
+
   if (kind == SyntaxKind::IdentifierToken) {
     return "IdentifierToken";
   }
@@ -120,6 +129,10 @@ std::string ToString(SyntaxKind kind) {
 
   if (kind == SyntaxKind::CloseBraceExpression) {
     return "CloseBraceExpression";
+  }
+
+  if (kind == SyntaxKind::VariableDeclaration) {
+    return "VariableDeclaration";
   }
 
   return "BadToken";

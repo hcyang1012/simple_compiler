@@ -25,6 +25,8 @@ enum SyntaxKind {
 
   TrueKeyword,
   FalseKeyword,
+  LetKeyword,
+  VarKeyword,
 
   CompilationUnit,
 
@@ -43,6 +45,8 @@ enum SyntaxKind {
 
   BlockStatement,
   ExpressionStatement,
+
+  VariableDeclaration,
 
 
 };

@@ -54,6 +54,11 @@ void DiagnosticsBag::ReportCannotConvert(const TextSpan& span,
   diagnostics_.emplace_back(span, "Cannot convert type " + ToString(from_type) +
                                       " to " + ToString(to_type) + ".");
 }
+void DiagnosticsBag::ReportCannotAssign(const TextSpan& span,
+                                        const std::string& name) {
+  diagnostics_.emplace_back(
+      span, "Variable " + name + " is read-only and cannot be assigned to.");
+}
 const std::vector<simple_compiler::Diagnostics>& DiagnosticsBag::Diagnostics()
     const {
   return diagnostics_;

@@ -27,11 +27,11 @@ class DiagnosticsBag {
                                     const OperatorSyntax& op,
                                     const ValueType& operand_type);
   void ReportUndefinedName(const TextSpan& span, const std::string& name);
-
   void ReportVariableAlreadyDeclared(const TextSpan& span,
                                      const std::string& name);
   void ReportCannotConvert(const TextSpan& span, const ValueType& from_type,
                            const ValueType& to_type);
+  void ReportCannotAssign(const TextSpan& span, const std::string& name);
   const std::vector<simple_compiler::Diagnostics>& Diagnostics() const;
 
  private:

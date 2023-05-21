@@ -94,6 +94,12 @@ std::shared_ptr<const StatementSyntax> Parser::parse_statement() {
   if (current()->Kind() == SyntaxKind::OpenBraceToken) {
     return parse_block_statement();
   }
+
+  if (current()->Kind() == SyntaxKind::LetKeyword ||
+      current()->Kind() == SyntaxKind::VarKeyword) {
+    return parse_variable_declaration();
+  }
+
   return parse_expression_statement();
 }
 
@@ -116,6 +122,19 @@ std::shared_ptr<const ExpressionStatementSyntax>
 Parser::parse_expression_statement() {
   auto expression = parse_expression();
   return std::make_shared<const ExpressionStatementSyntax>(expression);
+}
+
+std::shared_ptr<const VariableDeclarationSyntax>
+Parser::parse_variable_declaration() {
+    auto expected = current()->Kind() == SyntaxKind::LetKeyword
+                        ? SyntaxKind::LetKeyword
+                        : SyntaxKind::VarKeyword;
+    auto keyword = match(expected);
+    auto identifier = match(SyntaxKind::IdentifierToken);
+    auto equals = match(SyntaxKind::EqualsToken);
+    auto initializer = parse_expression();
+    return std::make_shared<const VariableDeclarationSyntax>(
+        keyword, identifier, equals, initializer);
 }
 
 std::shared_ptr<const ExpressionSyntax> Parser::parse_expression() {

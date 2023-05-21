@@ -11,7 +11,9 @@ enum BoundNodeKind {
   BoundAssignmentExpression,
 
   BoundBlockStatement,
-  BoundExpressionStatement  
+  BoundExpressionStatement,
+  BoundVariableDeclarationStatement
+
 };
 
 class BoundNode {

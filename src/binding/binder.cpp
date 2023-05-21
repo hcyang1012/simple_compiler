@@ -19,7 +19,7 @@
 #include "bound_variable_expression.hpp"
 
 namespace simple_compiler {
-Binder::Binder(std::shared_ptr<const BoundScope> parent) {
+Binder::Binder(std::shared_ptr<BoundScope> parent) {
   scope_ = std::make_shared<BoundScope>(parent);
 }
 
@@ -29,6 +29,9 @@ std::shared_ptr<BoundStatementNode> Binder::BindStatement(
     case SyntaxKind::BlockStatement:
       return bind_block_statement(
           std::static_pointer_cast<const BlockStatementSyntax>(syntax));
+    case SyntaxKind::VariableDeclaration:
+      return bind_variable_declaration(
+          std::static_pointer_cast<const VariableDeclarationSyntax>(syntax));
     case SyntaxKind::ExpressionStatement:
       return bind_expression_statement(
           std::static_pointer_cast<const ExpressionStatementSyntax>(syntax));
@@ -84,7 +87,7 @@ std::shared_ptr<const BoundGlobalScope> Binder::BindGlobalScope(
                                             statement);
 }
 
-std::shared_ptr<const BoundScope> Binder::CreateParentScope(
+std::shared_ptr<BoundScope> Binder::CreateParentScope(
     std::shared_ptr<const BoundGlobalScope> previous) {
   std::stack<std::shared_ptr<const BoundGlobalScope>> stack;
 
@@ -109,9 +112,11 @@ std::shared_ptr<const BoundScope> Binder::CreateParentScope(
 std::shared_ptr<BoundBlockStatementNode> Binder::bind_block_statement(
     const std::shared_ptr<const BlockStatementSyntax> syntax) {
   auto statements = std::vector<std::shared_ptr<const BoundStatementNode>>();
+  scope_ = std::make_shared<BoundScope>(scope_);
   for (auto statement : syntax->Statements()) {
     statements.push_back(BindStatement(statement));
   }
+  scope_ = scope_->Parent();
   return std::make_shared<BoundBlockStatementNode>(statements);
 }
 
@@ -119,6 +124,22 @@ std::shared_ptr<BoundExpressionStatementNode> Binder::bind_expression_statement(
     const std::shared_ptr<const ExpressionStatementSyntax> syntax) {
   auto expression = bind_expression(syntax->Expression());
   return std::make_shared<BoundExpressionStatementNode>(expression);
+}
+
+std::shared_ptr<BoundVariableDeclarationNode> Binder::bind_variable_declaration(
+    const std::shared_ptr<const VariableDeclarationSyntax> syntax) {
+  const std::string name = syntax->Identifier()->Text();
+  bool isReadOnly = syntax->Keyword()->Kind() == SyntaxKind::LetKeyword;
+  auto initializer = bind_expression(syntax->Initializer());
+
+  auto variable = std::make_shared<VariableSymbol>(name, isReadOnly,
+                                                   Value(initializer->Type()));
+  if (!scope_->TryDeclare(variable)) {
+    diagnostics_->ReportVariableAlreadyDeclared(syntax->Identifier()->Span(),
+                                                name);
+  }
+
+  return std::make_shared<BoundVariableDeclarationNode>(variable, initializer);
 }
 
 std::shared_ptr<BoundExpressionNode> Binder::bind_literal_expression(
@@ -249,8 +270,15 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_assignment_expression(
 
   auto variable = scope_->TryLookup(name);
   if (variable == nullptr) {
-    variable = std::make_shared<VariableSymbol>(name, default_value);
-    scope_->TryDeclare(variable);
+    diagnostics_->ReportUndefinedName(syntax->GetIdentifierToken()->Span(),
+                                      name);
+    return expression;
+  }
+
+  if (variable->IsReadOnly() == true) {
+    diagnostics_->ReportCannotAssign(syntax->GetIdentifierToken()->Span(),
+                                     name);
+    return expression;
   }
 
   if (variable->Type() != expression->Type()) {

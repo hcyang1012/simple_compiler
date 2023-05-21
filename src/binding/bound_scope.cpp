@@ -1,7 +1,7 @@
 #include "bound_scope.hpp"
 
 namespace simple_compiler {
-BoundScope::BoundScope(std::shared_ptr<const BoundScope> parent)
+BoundScope::BoundScope(std::shared_ptr<BoundScope> parent)
     : parent_(parent) {}
 
 bool BoundScope::TryDeclare(
@@ -24,7 +24,7 @@ std::shared_ptr<const VariableSymbol> BoundScope::TryLookup(
   return nullptr;
 }
 
-std::shared_ptr<const BoundScope> BoundScope::Parent() const { return parent_; }
+std::shared_ptr<BoundScope> BoundScope::Parent() const { return parent_; }
 
 std::vector<std::shared_ptr<const VariableSymbol>>
 BoundScope::GetDeclaredVariables() const {
