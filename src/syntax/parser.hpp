@@ -6,17 +6,26 @@
 #include "syntax_node.hpp"
 #include "syntax_token.hpp"
 #include "syntax_tree.hpp"
+#include "syntax_statement.hpp"
+#include "syntax_variable_declaration.hpp"
+#include "expression_statement_syntax.hpp"
+#include "block_statement_syntax.hpp"
+#include "compilation_unit_syntax.hpp"
 #include "../diagnostics/diagnostics_bag.hpp"
 #include "../text/text_source.hpp"
 namespace simple_compiler {
 class Parser {
  public:
   Parser(const TextSource& text);
-  std::shared_ptr<const SyntaxTree> Parse();
+  std::shared_ptr<const CompilationUnitSyntax> ParseCompilationUnit();
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
 
  private:
   const TextSource text_;
+  std::shared_ptr<const StatementSyntax> parse_statement();
+  std::shared_ptr<const BlockStatementSyntax> parse_block_statement();
+  std::shared_ptr<const ExpressionStatementSyntax> parse_expression_statement();
+  std::shared_ptr<const VariableDeclarationSyntax> parse_variable_declaration();
   std::shared_ptr<const ExpressionSyntax> parse_expression();
   std::shared_ptr<const ExpressionSyntax> parse_assignment_expression();
   std::shared_ptr<const ExpressionSyntax> parse_binary_expression(

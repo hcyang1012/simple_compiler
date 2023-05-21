@@ -20,9 +20,15 @@ enum SyntaxKind {
   BangEqualsToken,
   EqualsToken,
   EqualsEqualsToken,
+  OpenBraceToken,
+  CloseBraceToken,
 
   TrueKeyword,
   FalseKeyword,
+  LetKeyword,
+  VarKeyword,
+
+  CompilationUnit,
 
   LiteralExpression,
   UnaryExpression,
@@ -32,7 +38,17 @@ enum SyntaxKind {
   ParenthesisExpression,
   NameExpression,
   AssignmentExpression,
+  OpenBraceExpression,
+  CloseBraceExpression,
+
   Identifier,
+
+  BlockStatement,
+  ExpressionStatement,
+
+  VariableDeclaration,
+
+
 };
 std::string ToString(SyntaxKind kind);
 }  // namespace simple_compiler

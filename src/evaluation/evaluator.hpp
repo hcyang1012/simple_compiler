@@ -7,22 +7,33 @@
 #include "../binding/bind_node.hpp"
 #include "../binding/bound_assignment_expression.hpp"
 #include "../binding/bound_binary_expression.hpp"
+#include "../binding/bound_block_statement.hpp"
+#include "../binding/bound_expression_statement.hpp"
 #include "../binding/bound_literal_expression.hpp"
 #include "../binding/bound_unary_expression.hpp"
 #include "../binding/bound_variable_expression.hpp"
+#include "../binding/bound_variable_declaration.hpp"
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/value_type.hpp"
 
 namespace simple_compiler {
 class Evaluator {
  public:
-  Evaluator(
-      const std::shared_ptr<const BoundExpressionNode>& root,
-      const std::shared_ptr<std::map<std::string, Value>> variables);
-  Value Evaluate() const;
+  Evaluator(const std::shared_ptr<const BoundStatementNode> root,
+            const std::shared_ptr<std::map<std::string, Value>> variables);
+  Value Evaluate();
 
  private:
-  const std::shared_ptr<const BoundExpressionNode> root_;
+  std::shared_ptr<const Value> last_value_ = nullptr;
+  const std::shared_ptr<const BoundStatementNode> root_;
+  void evaluate_block_statement(
+      const std::shared_ptr<const BoundBlockStatementNode> block);
+  void evaluate_expression_statement(
+      const std::shared_ptr<const BoundExpressionStatementNode> statement);
+  void evaluate_variable_declaration(
+      const std::shared_ptr<const BoundVariableDeclarationNode> statement);
+  void evaluate_statement(
+      const std::shared_ptr<const BoundStatementNode> statment);
   Value evaluate_expression(
       const std::shared_ptr<const BoundExpressionNode>& node) const;
   Value evaluate_unary_expression(

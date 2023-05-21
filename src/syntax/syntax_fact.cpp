@@ -43,6 +43,14 @@ SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
     return SyntaxKind::FalseKeyword;
   }
 
+  if (text == "let") {
+    return SyntaxKind::LetKeyword;
+  }
+
+  if (text == "var") {
+    return SyntaxKind::VarKeyword;
+  }
+
   return SyntaxKind::IdentifierToken;
 }
 }  // namespace simple_compiler

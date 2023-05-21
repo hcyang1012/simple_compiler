@@ -7,15 +7,58 @@
 
 namespace simple_compiler {
 Evaluator::Evaluator(
-    const std::shared_ptr<const BoundExpressionNode>& root,
+    const std::shared_ptr<const BoundStatementNode> root,
     const std::shared_ptr<std::map<std::string, Value>> variables)
     : root_(root), variables_(variables), diagnostics_() {}
 
-Value Evaluator::Evaluate() const {
+Value Evaluator::Evaluate() {
   if (root_ == nullptr) {
     return Value(0);
   }
-  return evaluate_expression(root_);
+  evaluate_statement(root_);
+  if (last_value_ == nullptr) {
+    return Value(0);
+  } else {
+    return *last_value_;
+  }
+}
+
+void Evaluator::evaluate_block_statement(
+    const std::shared_ptr<const BoundBlockStatementNode> block) {
+  for (auto statement : block->Statements()) {
+    evaluate_statement(statement);
+  }
+}
+void Evaluator::evaluate_expression_statement(
+    const std::shared_ptr<const BoundExpressionStatementNode> statement) {
+  last_value_ = std::make_shared<const Value>(
+      evaluate_expression(statement->Expression()));
+}
+
+void Evaluator::evaluate_variable_declaration(
+    const std::shared_ptr<const BoundVariableDeclarationNode> statement) {
+  const auto& name = statement->Variable()->Name();
+  const auto& value = evaluate_expression(statement->Initializer());
+  variables_->insert_or_assign(name, value);
+  last_value_ = std::make_shared<const Value>(value);
+}
+
+void Evaluator::evaluate_statement(
+    const std::shared_ptr<const BoundStatementNode> statement) {
+  switch (statement->Kind()) {
+    case BoundNodeKind::BoundBlockStatement:
+      return evaluate_block_statement(
+          std::static_pointer_cast<const BoundBlockStatementNode>(statement));
+    case BoundNodeKind::BoundVariableDeclarationStatement:
+      return evaluate_variable_declaration(
+          std::static_pointer_cast<const BoundVariableDeclarationNode>(
+              statement));
+    case BoundNodeKind::BoundExpressionStatement:
+      return evaluate_expression_statement(
+          std::static_pointer_cast<const BoundExpressionStatementNode>(
+              statement));
+  }
+  throw std::runtime_error("Unexpected statment: " + statement->Kind());
 }
 
 Value Evaluator::evaluate_expression(

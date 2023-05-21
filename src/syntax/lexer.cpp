@@ -84,6 +84,14 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
     return std::make_shared<SyntaxToken>(SyntaxKind::CloseParenthesisToken,
                                          position_++, ")");
   }
+  if (current_char() == '{') {
+    return std::make_shared<SyntaxToken>(SyntaxKind::OpenBraceToken,
+                                         position_++, "{");
+  }
+  if (current_char() == '}') {
+    return std::make_shared<SyntaxToken>(SyntaxKind::CloseBraceToken,
+                                         position_++, "}");
+  }  
 
   if (current_char() == '!') {
     if(lookahead() == '='){

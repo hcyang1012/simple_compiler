@@ -27,6 +27,13 @@ set(SOURCES
   ${SRC_DIR}/syntax/name_expression_syntax.cpp
   ${SRC_DIR}/syntax/assignment_expression_syntax.cpp
   ${SRC_DIR}/syntax/identifier_syntax.cpp
+  ${SRC_DIR}/syntax/compilation_unit_syntax.cpp
+  ${SRC_DIR}/syntax/variable_symbol.cpp
+  ${SRC_DIR}/syntax/block_statement_syntax.cpp
+  ${SRC_DIR}/syntax/close_brace_syntax.cpp
+  ${SRC_DIR}/syntax/open_brace_syntax.cpp
+  ${SRC_DIR}/syntax/expression_statement_syntax.cpp
+  ${SRC_DIR}/syntax/syntax_variable_declaration.cpp
 
   ${SRC_DIR}/binding/bind_node.cpp
   ${SRC_DIR}/binding/binder.cpp
@@ -37,6 +44,11 @@ set(SOURCES
   ${SRC_DIR}/binding/bound_binary_operator.cpp
   ${SRC_DIR}/binding/bound_assignment_expression.cpp
   ${SRC_DIR}/binding/bound_variable_expression.cpp
+  ${SRC_DIR}/binding/bound_scope.cpp
+  ${SRC_DIR}/binding/bound_global_scope.cpp
+  ${SRC_DIR}/binding/bound_block_statement.cpp
+  ${SRC_DIR}/binding/bound_expression_statement.cpp
+  ${SRC_DIR}/binding/bound_variable_declaration.cpp
 
 
   ${SRC_DIR}/evaluation/evaluator.cpp

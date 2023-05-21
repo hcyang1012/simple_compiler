@@ -7,28 +7,58 @@
 #include "../diagnostics/diagnostics_bag.hpp"
 #include "../syntax/assignment_expression_syntax.hpp"
 #include "../syntax/binary_expression_syntax.hpp"
+#include "../syntax/block_statement_syntax.hpp"
+#include "../syntax/compilation_unit_syntax.hpp"
+#include "../syntax/expression_statement_syntax.hpp"
 #include "../syntax/literal_expression_syntax.hpp"
 #include "../syntax/name_expression_syntax.hpp"
 #include "../syntax/parenthesis_expression_syntax.hpp"
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/unary_expression_syntax.hpp"
-#include "binding/bind_node.hpp"
-#include "binding/bound_binary_expression.hpp"
-#include "binding/bound_literal_expression.hpp"
-#include "binding/bound_unary_expression.hpp"
+#include "../syntax/syntax_variable_declaration.hpp"
+#include "bind_node.hpp"
+
+#include "bound_block_statement.hpp"
+#include "bound_binary_expression.hpp"
+#include "bound_global_scope.hpp"
+#include "bound_literal_expression.hpp"
+#include "bound_scope.hpp"
+#include "bound_unary_expression.hpp"
+#include "bound_expression_statement.hpp"
+#include "bound_variable_declaration.hpp"
+
 namespace simple_compiler {
 class Binder {
  public:
-  Binder(const std::shared_ptr<std::map<std::string, Value>> variables);
-  std::shared_ptr<BoundExpressionNode> BindExpression(
-      const std::shared_ptr<const ExpressionSyntax> syntax);
+  Binder(std::shared_ptr<BoundScope> parent);
+  std::shared_ptr<BoundStatementNode> BindStatement(
+      const std::shared_ptr<const StatementSyntax> syntax);
   const std::shared_ptr<const DiagnosticsBag> Diagnostics() const;
+  std::shared_ptr<const BoundScope> Scope() const;
+
+  static std::shared_ptr<const BoundGlobalScope> BindGlobalScope(
+      std::shared_ptr<const BoundGlobalScope> previous,
+      std::shared_ptr<const CompilationUnitSyntax> syntax);
+
+  static std::shared_ptr<BoundScope> CreateParentScope(
+      std::shared_ptr<const BoundGlobalScope> previous);
 
  private:
   const std::shared_ptr<DiagnosticsBag> diagnostics_ =
       std::make_shared<DiagnosticsBag>();
 
-  const std::shared_ptr<std::map<std::string, Value>> variables_;
+  std::shared_ptr<BoundScope> scope_ = nullptr;
+
+  std::shared_ptr<BoundBlockStatementNode> bind_block_statement(
+      const std::shared_ptr<const BlockStatementSyntax> syntax);
+  std::shared_ptr<BoundExpressionStatementNode> bind_expression_statement(
+      const std::shared_ptr<const ExpressionStatementSyntax> syntax);
+  std::shared_ptr<BoundVariableDeclarationNode> bind_variable_declaration(
+      const std::shared_ptr<const VariableDeclarationSyntax> syntax);
+
+
+  std::shared_ptr<BoundExpressionNode> bind_expression(
+      const std::shared_ptr<const ExpressionSyntax> syntax);
 
   std::shared_ptr<BoundExpressionNode> bind_literal_expression(
       const std::shared_ptr<const LiteralExpressionSyntax> syntax);

@@ -43,6 +43,15 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::ParenthesisExpression) {
     return "ParenthesisExpression";
   }
+
+  if (kind == SyntaxKind::OpenBraceToken) {
+    return "OpenBraceToken";
+  }
+
+  if (kind == SyntaxKind::CloseBraceToken) {
+    return "CloseBraceToken";
+  }
+
   if (kind == SyntaxKind::UnaryExpression) {
     return "UnaryExpression";
   }
@@ -53,6 +62,15 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::FalseKeyword) {
     return "FalseKeyword";
   }
+
+  if (kind == SyntaxKind::LetKeyword) {
+    return "LetKeyword";
+  }
+
+  if (kind == SyntaxKind::VarKeyword) {
+    return "VarKeyword";
+  }
+
   if (kind == SyntaxKind::IdentifierToken) {
     return "IdentifierToken";
   }
@@ -91,6 +109,30 @@ std::string ToString(SyntaxKind kind) {
 
   if (kind == SyntaxKind::NameExpression) {
     return "NameExpression";
+  }
+
+  if (kind == SyntaxKind::CompilationUnit) {
+    return "CompilationUnit";
+  }
+
+  if (kind == SyntaxKind::BlockStatement) {
+    return "BlockStatement";
+  }
+
+  if (kind == SyntaxKind::ExpressionStatement) {
+    return "ExpressionStatement";
+  }
+
+  if (kind == SyntaxKind::OpenBraceExpression) {
+    return "OpenBraceExpression";
+  }
+
+  if (kind == SyntaxKind::CloseBraceExpression) {
+    return "CloseBraceExpression";
+  }
+
+  if (kind == SyntaxKind::VariableDeclaration) {
+    return "VariableDeclaration";
   }
 
   return "BadToken";

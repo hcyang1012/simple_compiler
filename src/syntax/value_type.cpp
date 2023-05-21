@@ -1,9 +1,23 @@
 #include "value_type.hpp"
 
+#include <stdexcept>
+
 namespace simple_compiler {
+Value::Value(const Value& other) : type_(other.type_), data_(other.data_) {}
+
 Value::Value(int value) : type_(ValueType::Int), data_({.int_ = value}) {}
 Value::Value(bool value)
     : type_(ValueType::Boolean), data_({.boolean_ = value}) {}
+
+Value Value::Build(const ValueType type) {
+  switch (type) {
+    case ValueType::Int:
+      return Value(0);
+    case ValueType::Boolean:
+      return Value(false);
+  }
+  throw std::runtime_error("Invalid value type");
+}
 
 int Value::AsInt() const { return data_.int_; }
 

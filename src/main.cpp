@@ -7,13 +7,13 @@
 #include "compilation/compilation.hpp"
 #include "syntax/syntax_tree.hpp"
 #include "syntax/value_type.hpp"
-
 void PrettyPrint(const simple_compiler::SyntaxNode& node,
                  const std::string& indent, bool is_last = true);
 int main(int argc, char** argv) {
   auto variables =
       std::make_shared<std::map<std::string, simple_compiler::Value>>();
   std::stringstream ss;
+  std::shared_ptr<simple_compiler::Compilation> previous = nullptr;
   while (true) {
     if (ss.str().length() == 0) {
       std::cout << "> " << std::flush;
@@ -37,13 +37,17 @@ int main(int argc, char** argv) {
       continue;
     }
 
-    simple_compiler::Compilation compilation(tree);
-    auto result = compilation.Evaluate(variables);
+    auto compilation =
+        previous == nullptr
+            ? std::make_shared<simple_compiler::Compilation>(tree)
+            : previous->ContinueWith(tree);
+    auto result = compilation->Evaluate(variables);
     PrettyPrint(*(tree->Root()), "");
 
     auto diagnostics = result.Diagnostics();
     if (diagnostics->Diagnostics().size() == 0) {
       std::cout << result.Value().ToString() << std::endl;
+      previous = compilation;
     } else {
       for (const auto& diag : diagnostics->Diagnostics()) {
         const auto kLineIndex = tree->Text().GetLineIndex(diag.Span().Start());

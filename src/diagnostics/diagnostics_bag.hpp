@@ -2,11 +2,11 @@
 #include <memory>
 #include <vector>
 
+#include "../syntax/operator_syntax.hpp"
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/value_type.hpp"
-#include "../syntax/operator_syntax.hpp"
-#include "diagnostics.hpp"
 #include "../text/text_span.hpp"
+#include "diagnostics.hpp"
 
 namespace simple_compiler {
 class DiagnosticsBag {
@@ -19,14 +19,19 @@ class DiagnosticsBag {
   void ReportUnexpectedToken(const TextSpan& span, const SyntaxKind actual_kind,
                              const SyntaxKind expected_kind);
   void ReportUndefinedBinaryOperator(const TextSpan& span,
-                                              const OperatorSyntax& op,
-                                              const ValueType& left_type,
-                                              const ValueType& right_type);
+                                     const OperatorSyntax& op,
+                                     const ValueType& left_type,
+                                     const ValueType& right_type);
 
   void ReportUndefinedUnaryOperator(const TextSpan& span,
-                                             const OperatorSyntax& op,
-                                             const ValueType& operand_type);
+                                    const OperatorSyntax& op,
+                                    const ValueType& operand_type);
   void ReportUndefinedName(const TextSpan& span, const std::string& name);
+  void ReportVariableAlreadyDeclared(const TextSpan& span,
+                                     const std::string& name);
+  void ReportCannotConvert(const TextSpan& span, const ValueType& from_type,
+                           const ValueType& to_type);
+  void ReportCannotAssign(const TextSpan& span, const std::string& name);
   const std::vector<simple_compiler::Diagnostics>& Diagnostics() const;
 
  private:
