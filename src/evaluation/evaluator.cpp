@@ -123,6 +123,14 @@ Value Evaluator::evaluate_binary_expression(
       return Value(left.Equals(right));
     case BoundBinaryOperatorKind::NotEquals:
       return Value(!left.Equals(right));
+    case BoundBinaryOperatorKind::LessThan:
+      return Value(left.AsInt() < right.AsInt());
+    case BoundBinaryOperatorKind::LessThanOrEquals:
+      return Value(left.AsInt() <= right.AsInt());
+    case BoundBinaryOperatorKind::GreaterThan:
+      return Value(left.AsInt() > right.AsInt());
+    case BoundBinaryOperatorKind::GreaterThanOrEquals:
+      return Value(left.AsInt() >= right.AsInt());
   }
 
   throw std::runtime_error("Unexpected binary operator: " +

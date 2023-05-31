@@ -23,6 +23,10 @@ int SyntaxFact::GetBinaryOperatorPrecedence(SyntaxKind kind) {
 
     case SyntaxKind::EqualsEqualsToken:
     case SyntaxKind::BangEqualsToken:
+    case SyntaxKind::LessToken:
+    case SyntaxKind::LessOrEqualsToken:
+    case SyntaxKind::GreaterToken:
+    case SyntaxKind::GreaterOrEqualsToken:
       return 3;
 
     case SyntaxKind::AmpersandAmpersandToken:

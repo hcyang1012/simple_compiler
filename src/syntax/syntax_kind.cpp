@@ -52,6 +52,22 @@ std::string ToString(SyntaxKind kind) {
     return "CloseBraceToken";
   }
 
+  if(kind == SyntaxKind::LessOrEqualsToken) {
+    return "LessOrEqualsToken";
+  }
+
+  if(kind == SyntaxKind::LessToken) {
+    return "LessToken";
+  }
+
+  if(kind == SyntaxKind::GreaterOrEqualsToken) {
+    return "GreaterOrEqualsToken";
+  }
+
+  if(kind == SyntaxKind::GreaterToken){
+    return "GreaterToken";
+  }
+
   if (kind == SyntaxKind::UnaryExpression) {
     return "UnaryExpression";
   }

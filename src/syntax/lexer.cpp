@@ -91,7 +91,7 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
   if (current_char() == '}') {
     return std::make_shared<SyntaxToken>(SyntaxKind::CloseBraceToken,
                                          position_++, "}");
-  }  
+  }
 
   if (current_char() == '!') {
     if(lookahead() == '='){
@@ -107,6 +107,28 @@ std::shared_ptr<SyntaxToken> simple_compiler::Lexer::NextToken() {
       position_ += 2;
       return std::make_shared<SyntaxToken>(SyntaxKind::AmpersandAmpersandToken,
                                            position_ - 2, "&&");
+    }
+  }
+  if(current_char() == '<'){
+    if(lookahead() == '='){
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::LessOrEqualsToken,
+                                           position_ - 2, "<=");
+    }else{
+      position_++;
+      return std::make_shared<SyntaxToken>(SyntaxKind::LessToken, position_ - 1,
+                                           "<");
+    }
+  }
+  if(current_char() == '>'){
+    if(lookahead() == '='){
+      position_ += 2;
+      return std::make_shared<SyntaxToken>(SyntaxKind::GreaterOrEqualsToken,
+                                           position_ - 2, ">=");
+    }else{
+      position_++;
+      return std::make_shared<SyntaxToken>(SyntaxKind::GreaterToken, position_ - 1,
+                                           ">");
     }
   }
   if (current_char() == '|') {
