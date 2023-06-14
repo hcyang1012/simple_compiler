@@ -151,6 +151,14 @@ std::string ToString(SyntaxKind kind) {
     return "VariableDeclaration";
   }
 
+  if (kind == IfKeyword) {
+    return "IfKeyword";
+  }
+
+  if (kind == SyntaxKind::ElseKeyword) {
+    return "ElseKeyword";
+  }
+
   if (kind == SyntaxKind::ElaseClause) {
     return "ElaseClause";
   }

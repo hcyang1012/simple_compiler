@@ -142,7 +142,8 @@ Parser::parse_variable_declaration() {
 }
 
 std::shared_ptr<const IfStatementSyntax> Parser::parse_if_statement() {
-  auto keyword = match(SyntaxKind::IfKeyword);
+  auto keyword =
+      std::make_shared<IfKeywordSyntax>(match(SyntaxKind::IfKeyword));
   auto condition = parse_expression();
   auto statement = parse_statement();
   auto elseClause = parse_else_clause();
@@ -154,7 +155,8 @@ std::shared_ptr<const ElseClauseSyntax> Parser::parse_else_clause() {
   if (current()->Kind() != SyntaxKind::ElseKeyword) {
     return nullptr;
   }
-  auto keyword = match(SyntaxKind::ElseKeyword);
+  auto keyword =
+      std::make_shared<ElseKeywordSyntax>(match(SyntaxKind::ElseKeyword));
   auto statement = parse_statement();
   return std::make_shared<const ElseClauseSyntax>(keyword, statement);
 }
