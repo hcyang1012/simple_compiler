@@ -100,6 +100,10 @@ std::shared_ptr<const StatementSyntax> Parser::parse_statement() {
     return parse_variable_declaration();
   }
 
+  if (current()->Kind() == SyntaxKind::IfKeyword) {
+    return parse_if_statement();
+  }
+
   return parse_expression_statement();
 }
 
@@ -126,15 +130,33 @@ Parser::parse_expression_statement() {
 
 std::shared_ptr<const VariableDeclarationSyntax>
 Parser::parse_variable_declaration() {
-    auto expected = current()->Kind() == SyntaxKind::LetKeyword
-                        ? SyntaxKind::LetKeyword
-                        : SyntaxKind::VarKeyword;
-    auto keyword = match(expected);
-    auto identifier = match(SyntaxKind::IdentifierToken);
-    auto equals = match(SyntaxKind::EqualsToken);
-    auto initializer = parse_expression();
-    return std::make_shared<const VariableDeclarationSyntax>(
-        keyword, identifier, equals, initializer);
+  auto expected = current()->Kind() == SyntaxKind::LetKeyword
+                      ? SyntaxKind::LetKeyword
+                      : SyntaxKind::VarKeyword;
+  auto keyword = match(expected);
+  auto identifier = match(SyntaxKind::IdentifierToken);
+  auto equals = match(SyntaxKind::EqualsToken);
+  auto initializer = parse_expression();
+  return std::make_shared<const VariableDeclarationSyntax>(keyword, identifier,
+                                                           equals, initializer);
+}
+
+std::shared_ptr<const IfStatementSyntax> Parser::parse_if_statement() {
+  auto keyword = match(SyntaxKind::IfKeyword);
+  auto condition = parse_expression();
+  auto statement = parse_statement();
+  auto elseClause = parse_else_clause();
+  return std::make_shared<const IfStatementSyntax>(keyword, condition,
+                                                   statement, elseClause);
+}
+
+std::shared_ptr<const ElseClauseSyntax> Parser::parse_else_clause() {
+  if (current()->Kind() != SyntaxKind::ElseKeyword) {
+    return nullptr;
+  }
+  auto keyword = match(SyntaxKind::ElseKeyword);
+  auto statement = parse_statement();
+  return std::make_shared<const ElseClauseSyntax>(keyword, statement);
 }
 
 std::shared_ptr<const ExpressionSyntax> Parser::parse_expression() {

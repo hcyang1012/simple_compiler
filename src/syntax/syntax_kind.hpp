@@ -31,6 +31,8 @@ enum SyntaxKind {
   FalseKeyword,
   LetKeyword,
   VarKeyword,
+  IfKeyword,
+  ElseKeyword,
 
   CompilationUnit,
 
@@ -49,6 +51,8 @@ enum SyntaxKind {
 
   BlockStatement,
   ExpressionStatement,
+  ElaseClause,
+  IfStatement,
 
   VariableDeclaration,
 

@@ -13,6 +13,7 @@
 #include "../binding/bound_unary_expression.hpp"
 #include "../binding/bound_variable_expression.hpp"
 #include "../binding/bound_variable_declaration.hpp"
+#include "../binding/bound_if_statement.hpp"
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/value_type.hpp"
 
@@ -32,8 +33,11 @@ class Evaluator {
       const std::shared_ptr<const BoundExpressionStatementNode> statement);
   void evaluate_variable_declaration(
       const std::shared_ptr<const BoundVariableDeclarationNode> statement);
+  void evaluate_if_statement(
+      const std::shared_ptr<const BoundIfStatementNode> statement);
   void evaluate_statement(
       const std::shared_ptr<const BoundStatementNode> statment);
+
   Value evaluate_expression(
       const std::shared_ptr<const BoundExpressionNode>& node) const;
   Value evaluate_unary_expression(

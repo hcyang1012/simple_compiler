@@ -27,6 +27,7 @@ set(SOURCES
   ${SRC_DIR}/syntax/name_expression_syntax.cpp
   ${SRC_DIR}/syntax/assignment_expression_syntax.cpp
   ${SRC_DIR}/syntax/identifier_syntax.cpp
+  ${SRC_DIR}/syntax/if_statement_syntax.cpp
   ${SRC_DIR}/syntax/compilation_unit_syntax.cpp
   ${SRC_DIR}/syntax/variable_symbol.cpp
   ${SRC_DIR}/syntax/block_statement_syntax.cpp
@@ -46,6 +47,7 @@ set(SOURCES
   ${SRC_DIR}/binding/bound_variable_expression.cpp
   ${SRC_DIR}/binding/bound_scope.cpp
   ${SRC_DIR}/binding/bound_global_scope.cpp
+  ${SRC_DIR}/binding/bound_if_statement.cpp
   ${SRC_DIR}/binding/bound_block_statement.cpp
   ${SRC_DIR}/binding/bound_expression_statement.cpp
   ${SRC_DIR}/binding/bound_variable_declaration.cpp

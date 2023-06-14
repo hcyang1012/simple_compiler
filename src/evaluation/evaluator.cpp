@@ -43,6 +43,16 @@ void Evaluator::evaluate_variable_declaration(
   last_value_ = std::make_shared<const Value>(value);
 }
 
+void Evaluator::evaluate_if_statement(
+    const std::shared_ptr<const BoundIfStatementNode> statement) {
+  const auto& condition = evaluate_expression(statement->Condition());
+  if(condition.AsBool()) {
+    evaluate_statement(statement->ThenStatement());
+  } else if(statement->ElseStatement() != nullptr) {
+    evaluate_statement(statement->ElseStatement());
+  }
+}
+
 void Evaluator::evaluate_statement(
     const std::shared_ptr<const BoundStatementNode> statement) {
   switch (statement->Kind()) {
@@ -57,6 +67,9 @@ void Evaluator::evaluate_statement(
       return evaluate_expression_statement(
           std::static_pointer_cast<const BoundExpressionStatementNode>(
               statement));
+    case BoundNodeKind::BoundIfStatement:
+      return evaluate_if_statement(
+          std::static_pointer_cast<const BoundIfStatementNode>(statement));
   }
   throw std::runtime_error("Unexpected statment: " + statement->Kind());
 }

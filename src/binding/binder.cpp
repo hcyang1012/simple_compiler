@@ -17,6 +17,7 @@
 #include "bound_unary_expression.hpp"
 #include "bound_unary_operator.hpp"
 #include "bound_variable_expression.hpp"
+#include "bound_if_statement.hpp"
 
 namespace simple_compiler {
 Binder::Binder(std::shared_ptr<BoundScope> parent) {
@@ -35,6 +36,9 @@ std::shared_ptr<BoundStatementNode> Binder::BindStatement(
     case SyntaxKind::ExpressionStatement:
       return bind_expression_statement(
           std::static_pointer_cast<const ExpressionStatementSyntax>(syntax));
+    case SyntaxKind::IfStatement:
+      return bind_if_statement(
+          std::static_pointer_cast<const IfStatementSyntax>(syntax));
     default:
       throw std::runtime_error("Unexpected syntax kind: " +
                                ToString(syntax->Kind()));
@@ -69,6 +73,16 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_expression(
   }
 }
 
+std::shared_ptr<BoundExpressionNode> Binder::bind_expression(
+    const std::shared_ptr<const ExpressionSyntax> syntax,
+    const ValueType& expected_type) {
+  auto expression = bind_expression(syntax);
+  if (expression->Type() != expected_type) {
+    diagnostics_->ReportCannotConvert(syntax->Span(), expression->Type(),
+                                      expected_type);
+  }
+  return expression;
+}
 const std::shared_ptr<const DiagnosticsBag> Binder::Diagnostics() const {
   return diagnostics_;
 }
@@ -124,6 +138,17 @@ std::shared_ptr<BoundExpressionStatementNode> Binder::bind_expression_statement(
     const std::shared_ptr<const ExpressionStatementSyntax> syntax) {
   auto expression = bind_expression(syntax->Expression());
   return std::make_shared<BoundExpressionStatementNode>(expression);
+}
+
+std::shared_ptr<BoundStatementNode> Binder::bind_if_statement(
+    const std::shared_ptr<const IfStatementSyntax> syntax) {
+  auto condition = bind_expression(syntax->Condition(), ValueType::Boolean);
+  auto then_statement = BindStatement(syntax->ThenStatement());
+  auto else_statement = syntax->ElseClause() == nullptr
+                            ? nullptr
+                            : BindStatement(syntax->ElseClause()->ElseStatement());
+  return std::make_shared<BoundIfStatementNode>(condition, then_statement,
+                                                else_statement);
 }
 
 std::shared_ptr<BoundVariableDeclarationNode> Binder::bind_variable_declaration(

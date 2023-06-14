@@ -55,6 +55,14 @@ SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
     return SyntaxKind::VarKeyword;
   }
 
+  if(text == "if"){
+    return SyntaxKind::IfKeyword;
+  }
+
+  if(text == "else"){
+    return SyntaxKind::ElseKeyword;
+  }
+
   return SyntaxKind::IdentifierToken;
 }
 }  // namespace simple_compiler
