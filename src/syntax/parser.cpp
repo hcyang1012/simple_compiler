@@ -104,6 +104,10 @@ std::shared_ptr<const StatementSyntax> Parser::parse_statement() {
     return parse_if_statement();
   }
 
+  if(current()->Kind() == SyntaxKind::WhileKeyword){
+    return parse_while_statement();
+  }
+
   return parse_expression_statement();
 }
 
@@ -139,6 +143,15 @@ Parser::parse_variable_declaration() {
   auto initializer = parse_expression();
   return std::make_shared<const VariableDeclarationSyntax>(keyword, identifier,
                                                            equals, initializer);
+}
+
+std::shared_ptr<const WhileStatementSyntax> Parser::parse_while_statement() {
+  auto keyword =
+      std::make_shared<WhileKeywordSyntax>(match(SyntaxKind::WhileKeyword));
+  auto condition = parse_expression();
+  auto statement = parse_statement();
+  return std::make_shared<const WhileStatementSyntax>(keyword, condition,
+                                                      statement);
 }
 
 std::shared_ptr<const IfStatementSyntax> Parser::parse_if_statement() {

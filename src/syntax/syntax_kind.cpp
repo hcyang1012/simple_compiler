@@ -167,6 +167,14 @@ std::string ToString(SyntaxKind kind) {
     return "IfStatement";
   }
 
+  if (kind == SyntaxKind::WhileKeyword) {
+    return "WhileKeyword";
+  }
+
+  if (kind == SyntaxKind::WhileStatement) {
+    return "WhileStatement";
+  }
+
   return "BadToken";
 }
 }  // namespace simple_compiler

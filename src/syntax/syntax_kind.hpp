@@ -33,6 +33,7 @@ enum SyntaxKind {
   VarKeyword,
   IfKeyword,
   ElseKeyword,
+  WhileKeyword,
 
   CompilationUnit,
 
@@ -53,6 +54,7 @@ enum SyntaxKind {
   ExpressionStatement,
   ElaseClause,
   IfStatement,
+  WhileStatement,
 
   VariableDeclaration,
 

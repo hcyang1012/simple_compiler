@@ -12,12 +12,12 @@
 #include "bound_assignment_expression.hpp"
 #include "bound_binary_expression.hpp"
 #include "bound_global_scope.hpp"
+#include "bound_if_statement.hpp"
 #include "bound_literal_expression.hpp"
 #include "bound_scope.hpp"
 #include "bound_unary_expression.hpp"
 #include "bound_unary_operator.hpp"
 #include "bound_variable_expression.hpp"
-#include "bound_if_statement.hpp"
 
 namespace simple_compiler {
 Binder::Binder(std::shared_ptr<BoundScope> parent) {
@@ -39,6 +39,9 @@ std::shared_ptr<BoundStatementNode> Binder::BindStatement(
     case SyntaxKind::IfStatement:
       return bind_if_statement(
           std::static_pointer_cast<const IfStatementSyntax>(syntax));
+    case SyntaxKind::WhileStatement:
+      return bind_while_statement(
+          std::static_pointer_cast<const WhileStatementSyntax>(syntax));
     default:
       throw std::runtime_error("Unexpected syntax kind: " +
                                ToString(syntax->Kind()));
@@ -144,11 +147,19 @@ std::shared_ptr<BoundStatementNode> Binder::bind_if_statement(
     const std::shared_ptr<const IfStatementSyntax> syntax) {
   auto condition = bind_expression(syntax->Condition(), ValueType::Boolean);
   auto then_statement = BindStatement(syntax->ThenStatement());
-  auto else_statement = syntax->ElseClause() == nullptr
-                            ? nullptr
-                            : BindStatement(syntax->ElseClause()->ElseStatement());
+  auto else_statement =
+      syntax->ElseClause() == nullptr
+          ? nullptr
+          : BindStatement(syntax->ElseClause()->ElseStatement());
   return std::make_shared<BoundIfStatementNode>(condition, then_statement,
                                                 else_statement);
+}
+
+std::shared_ptr<BoundWhileStatementNode> Binder::bind_while_statement(
+    const std::shared_ptr<const WhileStatementSyntax> syntax) {
+  auto condition = bind_expression(syntax->GetCondition(), ValueType::Boolean);
+  auto body = BindStatement(syntax->GetBody());
+  return std::make_shared<BoundWhileStatementNode>(condition, body);
 }
 
 std::shared_ptr<BoundVariableDeclarationNode> Binder::bind_variable_declaration(

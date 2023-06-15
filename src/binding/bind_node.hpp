@@ -14,6 +14,7 @@ enum BoundNodeKind {
   BoundExpressionStatement,
   BoundVariableDeclarationStatement,
   BoundIfStatement,
+  BoundWhileStatement,
 
 };
 

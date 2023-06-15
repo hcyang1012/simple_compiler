@@ -63,6 +63,10 @@ SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
     return SyntaxKind::ElseKeyword;
   }
 
+  if(text == "while"){
+    return SyntaxKind::WhileKeyword;
+  }
+
   return SyntaxKind::IdentifierToken;
 }
 }  // namespace simple_compiler

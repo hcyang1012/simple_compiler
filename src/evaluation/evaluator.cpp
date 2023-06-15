@@ -53,6 +53,14 @@ void Evaluator::evaluate_if_statement(
   }
 }
 
+void Evaluator::evaluate_while_statement(
+    const std::shared_ptr<const BoundWhileStatementNode> statement) {
+  while(evaluate_expression(statement->GetCondition()).AsBool()) {
+    evaluate_statement(statement->GetBody());
+  }
+}
+
+
 void Evaluator::evaluate_statement(
     const std::shared_ptr<const BoundStatementNode> statement) {
   switch (statement->Kind()) {
@@ -70,6 +78,9 @@ void Evaluator::evaluate_statement(
     case BoundNodeKind::BoundIfStatement:
       return evaluate_if_statement(
           std::static_pointer_cast<const BoundIfStatementNode>(statement));
+    case BoundNodeKind::BoundWhileStatement:
+      return evaluate_while_statement(
+          std::static_pointer_cast<const BoundWhileStatementNode>(statement));
   }
   throw std::runtime_error("Unexpected statment: " + statement->Kind());
 }

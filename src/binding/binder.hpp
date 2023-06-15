@@ -17,6 +17,7 @@
 #include "../syntax/syntax_node.hpp"
 #include "../syntax/syntax_variable_declaration.hpp"
 #include "../syntax/unary_expression_syntax.hpp"
+#include "../syntax/while_statement_syntax.hpp"
 #include "bind_node.hpp"
 #include "bound_binary_expression.hpp"
 #include "bound_block_statement.hpp"
@@ -26,6 +27,7 @@
 #include "bound_scope.hpp"
 #include "bound_unary_expression.hpp"
 #include "bound_variable_declaration.hpp"
+#include "bound_while_statement.hpp"
 
 namespace simple_compiler {
 class Binder {
@@ -57,6 +59,8 @@ class Binder {
       const std::shared_ptr<const VariableDeclarationSyntax> syntax);
   std::shared_ptr<BoundStatementNode> bind_if_statement(
       const std::shared_ptr<const IfStatementSyntax> syntax);
+  std::shared_ptr<BoundWhileStatementNode> bind_while_statement(
+      const std::shared_ptr<const WhileStatementSyntax> syntax);
 
   std::shared_ptr<BoundExpressionNode> bind_expression(
       const std::shared_ptr<const ExpressionSyntax> syntax);
