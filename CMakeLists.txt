@@ -4,6 +4,7 @@ project(my_compiler VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
+set (CMAKE_CXX_STANDARD 17)
 
 set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set(SOURCES
@@ -36,6 +37,7 @@ set(SOURCES
   ${SRC_DIR}/syntax/expression_statement_syntax.cpp
   ${SRC_DIR}/syntax/syntax_variable_declaration.cpp
   ${SRC_DIR}/syntax/while_statement_syntax.cpp
+  ${SRC_DIR}/syntax/for_statement_syntax.cpp
 
   ${SRC_DIR}/binding/bind_node.cpp
   ${SRC_DIR}/binding/binder.cpp
@@ -53,6 +55,7 @@ set(SOURCES
   ${SRC_DIR}/binding/bound_expression_statement.cpp
   ${SRC_DIR}/binding/bound_variable_declaration.cpp
   ${SRC_DIR}/binding/bound_while_statement.cpp
+  ${SRC_DIR}/binding/bound_for_statement.cpp
 
 
   ${SRC_DIR}/evaluation/evaluator.cpp

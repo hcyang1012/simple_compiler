@@ -104,8 +104,12 @@ std::shared_ptr<const StatementSyntax> Parser::parse_statement() {
     return parse_if_statement();
   }
 
-  if(current()->Kind() == SyntaxKind::WhileKeyword){
+  if (current()->Kind() == SyntaxKind::WhileKeyword) {
     return parse_while_statement();
+  }
+
+  if (current()->Kind() == SyntaxKind::ForKeyword) {
+    return parse_for_statement();
   }
 
   return parse_expression_statement();
@@ -117,8 +121,13 @@ std::shared_ptr<const BlockStatementSyntax> Parser::parse_block_statement() {
       match(SyntaxKind::OpenBraceToken));
   while (current()->Kind() != SyntaxKind::EndOfFileToken &&
          current()->Kind() != SyntaxKind::CloseBraceToken) {
+    auto start_token = current();
     auto statement = parse_statement();
     statements.push_back(statement);
+
+    if(current() == start_token) {
+      next_token();
+    }
   }
   auto close_brace_syntax = std::make_shared<const CloseBraceSyntax>(
       match(SyntaxKind::CloseBraceToken));
@@ -152,6 +161,23 @@ std::shared_ptr<const WhileStatementSyntax> Parser::parse_while_statement() {
   auto statement = parse_statement();
   return std::make_shared<const WhileStatementSyntax>(keyword, condition,
                                                       statement);
+}
+
+std::shared_ptr<const ForStatementSyntax> Parser::parse_for_statement() {
+  auto for_keyword =
+      std::make_shared<ForKeywordSyntax>(match(SyntaxKind::ForKeyword));
+  auto identifier =
+      std::make_shared<IdentifierSyntax>(match(SyntaxKind::IdentifierToken));
+  auto equals =
+      std::make_shared<OperatorSyntax>(match(SyntaxKind::EqualsToken));
+  auto lowerBound = parse_expression();
+  auto to_keyword =
+      std::make_shared<ToKeywordSyntax>(match(SyntaxKind::ToKeyword));
+  auto upperBound = parse_expression();
+  auto body = parse_statement();
+  return std::make_shared<const ForStatementSyntax>(
+      for_keyword, identifier, equals, lowerBound, to_keyword, upperBound,
+      body);
 }
 
 std::shared_ptr<const IfStatementSyntax> Parser::parse_if_statement() {

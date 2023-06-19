@@ -60,6 +60,17 @@ void Evaluator::evaluate_while_statement(
   }
 }
 
+void Evaluator::evaluate_for_statement(
+    const std::shared_ptr<const BoundForStatementNode> statement) {
+auto lower_bound = evaluate_expression(statement->LowerBound());
+auto upper_bound = evaluate_expression(statement->UpperBound());
+
+for(auto i = lower_bound.AsInt(); i <= upper_bound.AsInt(); i++) {
+  variables_->insert_or_assign(statement->Variable()->Name(), Value(i));
+  evaluate_statement(statement->Body());
+}
+
+}
 
 void Evaluator::evaluate_statement(
     const std::shared_ptr<const BoundStatementNode> statement) {
@@ -81,6 +92,9 @@ void Evaluator::evaluate_statement(
     case BoundNodeKind::BoundWhileStatement:
       return evaluate_while_statement(
           std::static_pointer_cast<const BoundWhileStatementNode>(statement));
+    case BoundNodeKind::BoundForStatement:
+      return evaluate_for_statement(
+          std::static_pointer_cast<const BoundForStatementNode>(statement));
   }
   throw std::runtime_error("Unexpected statment: " + statement->Kind());
 }

@@ -47,6 +47,10 @@ SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
     return SyntaxKind::FalseKeyword;
   }
 
+  if (text == "for") {
+    return SyntaxKind::ForKeyword;
+  }  
+
   if (text == "let") {
     return SyntaxKind::LetKeyword;
   }
@@ -66,6 +70,13 @@ SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
   if(text == "while"){
     return SyntaxKind::WhileKeyword;
   }
+
+  if(text == "to"){
+    return SyntaxKind::ToKeyword;
+  }
+  
+
+
 
   return SyntaxKind::IdentifierToken;
 }

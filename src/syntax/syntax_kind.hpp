@@ -29,11 +29,13 @@ enum SyntaxKind {
 
   TrueKeyword,
   FalseKeyword,
+  ForKeyword,
   LetKeyword,
   VarKeyword,
   IfKeyword,
   ElseKeyword,
   WhileKeyword,
+  ToKeyword,  
 
   CompilationUnit,
 
@@ -55,6 +57,7 @@ enum SyntaxKind {
   ElaseClause,
   IfStatement,
   WhileStatement,
+  ForStatement,
 
   VariableDeclaration,
 

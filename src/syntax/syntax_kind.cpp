@@ -175,6 +175,19 @@ std::string ToString(SyntaxKind kind) {
     return "WhileStatement";
   }
 
+  if (kind == SyntaxKind::ForKeyword) {
+    return "ForKeyword";
+  }
+
+  if (kind == SyntaxKind::ToKeyword) {
+    return "ToKeyword";
+  }
+
+  if(kind == SyntaxKind::ForStatement){
+    return "ForStatement";
+  }
+
+
   return "BadToken";
 }
 }  // namespace simple_compiler
