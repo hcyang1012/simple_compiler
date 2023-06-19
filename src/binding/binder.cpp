@@ -12,6 +12,7 @@
 #include "bound_assignment_expression.hpp"
 #include "bound_binary_expression.hpp"
 #include "bound_global_scope.hpp"
+#include "bound_if_statement.hpp"
 #include "bound_literal_expression.hpp"
 #include "bound_scope.hpp"
 #include "bound_unary_expression.hpp"
@@ -35,6 +36,15 @@ std::shared_ptr<BoundStatementNode> Binder::BindStatement(
     case SyntaxKind::ExpressionStatement:
       return bind_expression_statement(
           std::static_pointer_cast<const ExpressionStatementSyntax>(syntax));
+    case SyntaxKind::IfStatement:
+      return bind_if_statement(
+          std::static_pointer_cast<const IfStatementSyntax>(syntax));
+    case SyntaxKind::WhileStatement:
+      return bind_while_statement(
+          std::static_pointer_cast<const WhileStatementSyntax>(syntax));
+    case SyntaxKind::ForStatement:
+      return bind_for_statement(
+          std::static_pointer_cast<const ForStatementSyntax>(syntax));
     default:
       throw std::runtime_error("Unexpected syntax kind: " +
                                ToString(syntax->Kind()));
@@ -69,6 +79,16 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_expression(
   }
 }
 
+std::shared_ptr<BoundExpressionNode> Binder::bind_expression(
+    const std::shared_ptr<const ExpressionSyntax> syntax,
+    const ValueType& expected_type) {
+  auto expression = bind_expression(syntax);
+  if (expression->Type() != expected_type) {
+    diagnostics_->ReportCannotConvert(syntax->Span(), expression->Type(),
+                                      expected_type);
+  }
+  return expression;
+}
 const std::shared_ptr<const DiagnosticsBag> Binder::Diagnostics() const {
   return diagnostics_;
 }
@@ -124,6 +144,42 @@ std::shared_ptr<BoundExpressionStatementNode> Binder::bind_expression_statement(
     const std::shared_ptr<const ExpressionStatementSyntax> syntax) {
   auto expression = bind_expression(syntax->Expression());
   return std::make_shared<BoundExpressionStatementNode>(expression);
+}
+
+std::shared_ptr<BoundStatementNode> Binder::bind_if_statement(
+    const std::shared_ptr<const IfStatementSyntax> syntax) {
+  auto condition = bind_expression(syntax->Condition(), ValueType::Boolean);
+  auto then_statement = BindStatement(syntax->ThenStatement());
+  auto else_statement =
+      syntax->ElseClause() == nullptr
+          ? nullptr
+          : BindStatement(syntax->ElseClause()->ElseStatement());
+  return std::make_shared<BoundIfStatementNode>(condition, then_statement,
+                                                else_statement);
+}
+
+std::shared_ptr<BoundWhileStatementNode> Binder::bind_while_statement(
+    const std::shared_ptr<const WhileStatementSyntax> syntax) {
+  auto condition = bind_expression(syntax->GetCondition(), ValueType::Boolean);
+  auto body = BindStatement(syntax->GetBody());
+  return std::make_shared<BoundWhileStatementNode>(condition, body);
+}
+
+std::shared_ptr<BoundForStatementNode> Binder::bind_for_statement(
+    const std::shared_ptr<const ForStatementSyntax> syntax) {
+  auto lower_bound = bind_expression(syntax->LowerBound(), ValueType::Int);
+  auto upper_bound = bind_expression(syntax->UpperBound(), ValueType::Int);
+  scope_ = std::make_shared<BoundScope>(scope_);
+  auto variable = std::make_shared<VariableSymbol>(
+      syntax->Identifier()->ValueText(), true, Value(ValueType::Int));
+  if(!scope_->TryDeclare(variable)) {
+    diagnostics_->ReportVariableAlreadyDeclared(syntax->Identifier()->Span(),
+                                                variable->Name());
+  }
+  auto body = BindStatement(syntax->Body());
+  scope_ = scope_->Parent();
+  return std::make_shared<BoundForStatementNode>(variable, lower_bound,
+                                                 upper_bound, body);
 }
 
 std::shared_ptr<BoundVariableDeclarationNode> Binder::bind_variable_declaration(
@@ -252,6 +308,9 @@ std::shared_ptr<BoundExpressionNode> Binder::bind_parenthesized_expression(
 std::shared_ptr<BoundExpressionNode> Binder::bind_name_expression(
     const std::shared_ptr<const NameExpressionSyntax> syntax) {
   const std::string kVariableName = syntax->GetIdentifierNode()->ValueText();
+  if(kVariableName.empty() == true) {
+    return std::make_shared<BoundLiteralExpressionNode>(Value(0));
+  }
   auto variable = scope_->TryLookup(kVariableName);
   if (variable == nullptr) {
     diagnostics_->ReportUndefinedName(syntax->GetIdentifierNode()->Span(),

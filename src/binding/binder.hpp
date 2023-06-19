@@ -10,22 +10,26 @@
 #include "../syntax/block_statement_syntax.hpp"
 #include "../syntax/compilation_unit_syntax.hpp"
 #include "../syntax/expression_statement_syntax.hpp"
+#include "../syntax/if_statement_syntax.hpp"
 #include "../syntax/literal_expression_syntax.hpp"
 #include "../syntax/name_expression_syntax.hpp"
 #include "../syntax/parenthesis_expression_syntax.hpp"
 #include "../syntax/syntax_node.hpp"
-#include "../syntax/unary_expression_syntax.hpp"
 #include "../syntax/syntax_variable_declaration.hpp"
+#include "../syntax/unary_expression_syntax.hpp"
+#include "../syntax/while_statement_syntax.hpp"
+#include "../syntax/for_statement_syntax.hpp"
 #include "bind_node.hpp"
-
-#include "bound_block_statement.hpp"
 #include "bound_binary_expression.hpp"
+#include "bound_block_statement.hpp"
+#include "bound_expression_statement.hpp"
 #include "bound_global_scope.hpp"
 #include "bound_literal_expression.hpp"
 #include "bound_scope.hpp"
 #include "bound_unary_expression.hpp"
-#include "bound_expression_statement.hpp"
 #include "bound_variable_declaration.hpp"
+#include "bound_while_statement.hpp"
+#include "bound_for_statement.hpp"
 
 namespace simple_compiler {
 class Binder {
@@ -55,10 +59,18 @@ class Binder {
       const std::shared_ptr<const ExpressionStatementSyntax> syntax);
   std::shared_ptr<BoundVariableDeclarationNode> bind_variable_declaration(
       const std::shared_ptr<const VariableDeclarationSyntax> syntax);
-
+  std::shared_ptr<BoundStatementNode> bind_if_statement(
+      const std::shared_ptr<const IfStatementSyntax> syntax);
+  std::shared_ptr<BoundWhileStatementNode> bind_while_statement(
+      const std::shared_ptr<const WhileStatementSyntax> syntax);
+  std::shared_ptr<BoundForStatementNode> bind_for_statement(
+      const std::shared_ptr<const ForStatementSyntax> syntax);
 
   std::shared_ptr<BoundExpressionNode> bind_expression(
       const std::shared_ptr<const ExpressionSyntax> syntax);
+  std::shared_ptr<BoundExpressionNode> bind_expression(
+      const std::shared_ptr<const ExpressionSyntax> syntax,
+      const ValueType& expected_type);
 
   std::shared_ptr<BoundExpressionNode> bind_literal_expression(
       const std::shared_ptr<const LiteralExpressionSyntax> syntax);

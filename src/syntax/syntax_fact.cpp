@@ -23,6 +23,10 @@ int SyntaxFact::GetBinaryOperatorPrecedence(SyntaxKind kind) {
 
     case SyntaxKind::EqualsEqualsToken:
     case SyntaxKind::BangEqualsToken:
+    case SyntaxKind::LessToken:
+    case SyntaxKind::LessOrEqualsToken:
+    case SyntaxKind::GreaterToken:
+    case SyntaxKind::GreaterOrEqualsToken:
       return 3;
 
     case SyntaxKind::AmpersandAmpersandToken:
@@ -43,6 +47,10 @@ SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
     return SyntaxKind::FalseKeyword;
   }
 
+  if (text == "for") {
+    return SyntaxKind::ForKeyword;
+  }  
+
   if (text == "let") {
     return SyntaxKind::LetKeyword;
   }
@@ -50,6 +58,25 @@ SyntaxKind SyntaxFact::GetKeywordKind(const std::string& text) {
   if (text == "var") {
     return SyntaxKind::VarKeyword;
   }
+
+  if(text == "if"){
+    return SyntaxKind::IfKeyword;
+  }
+
+  if(text == "else"){
+    return SyntaxKind::ElseKeyword;
+  }
+
+  if(text == "while"){
+    return SyntaxKind::WhileKeyword;
+  }
+
+  if(text == "to"){
+    return SyntaxKind::ToKeyword;
+  }
+  
+
+
 
   return SyntaxKind::IdentifierToken;
 }

@@ -10,7 +10,7 @@ namespace simple_compiler {
 class BoundScope {
  public:
   BoundScope(std::shared_ptr<BoundScope> parent);
-  bool TryDeclare(const std::shared_ptr<const VariableSymbol> variable);
+  bool TryDeclare(std::shared_ptr<const VariableSymbol> variable);
   std::shared_ptr<const VariableSymbol> TryLookup(
       const std::string& name) const;
   std::shared_ptr<BoundScope> Parent() const;

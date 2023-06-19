@@ -100,6 +100,18 @@ std::shared_ptr<const StatementSyntax> Parser::parse_statement() {
     return parse_variable_declaration();
   }
 
+  if (current()->Kind() == SyntaxKind::IfKeyword) {
+    return parse_if_statement();
+  }
+
+  if (current()->Kind() == SyntaxKind::WhileKeyword) {
+    return parse_while_statement();
+  }
+
+  if (current()->Kind() == SyntaxKind::ForKeyword) {
+    return parse_for_statement();
+  }
+
   return parse_expression_statement();
 }
 
@@ -109,8 +121,13 @@ std::shared_ptr<const BlockStatementSyntax> Parser::parse_block_statement() {
       match(SyntaxKind::OpenBraceToken));
   while (current()->Kind() != SyntaxKind::EndOfFileToken &&
          current()->Kind() != SyntaxKind::CloseBraceToken) {
+    auto start_token = current();
     auto statement = parse_statement();
     statements.push_back(statement);
+
+    if(current() == start_token) {
+      next_token();
+    }
   }
   auto close_brace_syntax = std::make_shared<const CloseBraceSyntax>(
       match(SyntaxKind::CloseBraceToken));
@@ -126,15 +143,61 @@ Parser::parse_expression_statement() {
 
 std::shared_ptr<const VariableDeclarationSyntax>
 Parser::parse_variable_declaration() {
-    auto expected = current()->Kind() == SyntaxKind::LetKeyword
-                        ? SyntaxKind::LetKeyword
-                        : SyntaxKind::VarKeyword;
-    auto keyword = match(expected);
-    auto identifier = match(SyntaxKind::IdentifierToken);
-    auto equals = match(SyntaxKind::EqualsToken);
-    auto initializer = parse_expression();
-    return std::make_shared<const VariableDeclarationSyntax>(
-        keyword, identifier, equals, initializer);
+  auto expected = current()->Kind() == SyntaxKind::LetKeyword
+                      ? SyntaxKind::LetKeyword
+                      : SyntaxKind::VarKeyword;
+  auto keyword = match(expected);
+  auto identifier = match(SyntaxKind::IdentifierToken);
+  auto equals = match(SyntaxKind::EqualsToken);
+  auto initializer = parse_expression();
+  return std::make_shared<const VariableDeclarationSyntax>(keyword, identifier,
+                                                           equals, initializer);
+}
+
+std::shared_ptr<const WhileStatementSyntax> Parser::parse_while_statement() {
+  auto keyword =
+      std::make_shared<WhileKeywordSyntax>(match(SyntaxKind::WhileKeyword));
+  auto condition = parse_expression();
+  auto statement = parse_statement();
+  return std::make_shared<const WhileStatementSyntax>(keyword, condition,
+                                                      statement);
+}
+
+std::shared_ptr<const ForStatementSyntax> Parser::parse_for_statement() {
+  auto for_keyword =
+      std::make_shared<ForKeywordSyntax>(match(SyntaxKind::ForKeyword));
+  auto identifier =
+      std::make_shared<IdentifierSyntax>(match(SyntaxKind::IdentifierToken));
+  auto equals =
+      std::make_shared<OperatorSyntax>(match(SyntaxKind::EqualsToken));
+  auto lowerBound = parse_expression();
+  auto to_keyword =
+      std::make_shared<ToKeywordSyntax>(match(SyntaxKind::ToKeyword));
+  auto upperBound = parse_expression();
+  auto body = parse_statement();
+  return std::make_shared<const ForStatementSyntax>(
+      for_keyword, identifier, equals, lowerBound, to_keyword, upperBound,
+      body);
+}
+
+std::shared_ptr<const IfStatementSyntax> Parser::parse_if_statement() {
+  auto keyword =
+      std::make_shared<IfKeywordSyntax>(match(SyntaxKind::IfKeyword));
+  auto condition = parse_expression();
+  auto statement = parse_statement();
+  auto elseClause = parse_else_clause();
+  return std::make_shared<const IfStatementSyntax>(keyword, condition,
+                                                   statement, elseClause);
+}
+
+std::shared_ptr<const ElseClauseSyntax> Parser::parse_else_clause() {
+  if (current()->Kind() != SyntaxKind::ElseKeyword) {
+    return nullptr;
+  }
+  auto keyword =
+      std::make_shared<ElseKeywordSyntax>(match(SyntaxKind::ElseKeyword));
+  auto statement = parse_statement();
+  return std::make_shared<const ElseClauseSyntax>(keyword, statement);
 }
 
 std::shared_ptr<const ExpressionSyntax> Parser::parse_expression() {

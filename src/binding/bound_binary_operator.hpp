@@ -14,6 +14,10 @@ enum BoundBinaryOperatorKind {
   LogicalOr,
   Equals,
   NotEquals,
+  LessThan,
+  LessThanOrEquals,
+  GreaterThan,
+  GreaterThanOrEquals
 };
 class BoundBinaryOperatorNode {
  public:

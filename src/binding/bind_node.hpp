@@ -9,10 +9,13 @@ enum BoundNodeKind {
   BoundBinaryExpression,
   BoundVariableExpression,
   BoundAssignmentExpression,
+  BoundForStatement,
 
   BoundBlockStatement,
   BoundExpressionStatement,
-  BoundVariableDeclarationStatement
+  BoundVariableDeclarationStatement,
+  BoundIfStatement,
+  BoundWhileStatement,
 
 };
 

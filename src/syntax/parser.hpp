@@ -7,6 +7,9 @@
 #include "syntax_token.hpp"
 #include "syntax_tree.hpp"
 #include "syntax_statement.hpp"
+#include "if_statement_syntax.hpp"
+#include "while_statement_syntax.hpp"
+#include "for_statement_syntax.hpp"
 #include "syntax_variable_declaration.hpp"
 #include "expression_statement_syntax.hpp"
 #include "block_statement_syntax.hpp"
@@ -26,6 +29,12 @@ class Parser {
   std::shared_ptr<const BlockStatementSyntax> parse_block_statement();
   std::shared_ptr<const ExpressionStatementSyntax> parse_expression_statement();
   std::shared_ptr<const VariableDeclarationSyntax> parse_variable_declaration();
+  std::shared_ptr<const IfStatementSyntax> parse_if_statement();
+  std::shared_ptr<const WhileStatementSyntax> parse_while_statement();
+  std::shared_ptr<const ForStatementSyntax> parse_for_statement();
+
+
+  std::shared_ptr<const ElseClauseSyntax> parse_else_clause();
   std::shared_ptr<const ExpressionSyntax> parse_expression();
   std::shared_ptr<const ExpressionSyntax> parse_assignment_expression();
   std::shared_ptr<const ExpressionSyntax> parse_binary_expression(

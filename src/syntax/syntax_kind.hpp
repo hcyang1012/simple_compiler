@@ -22,11 +22,20 @@ enum SyntaxKind {
   EqualsEqualsToken,
   OpenBraceToken,
   CloseBraceToken,
+  LessOrEqualsToken,
+  LessToken,
+  GreaterOrEqualsToken,
+  GreaterToken,
 
   TrueKeyword,
   FalseKeyword,
+  ForKeyword,
   LetKeyword,
   VarKeyword,
+  IfKeyword,
+  ElseKeyword,
+  WhileKeyword,
+  ToKeyword,  
 
   CompilationUnit,
 
@@ -45,6 +54,10 @@ enum SyntaxKind {
 
   BlockStatement,
   ExpressionStatement,
+  ElaseClause,
+  IfStatement,
+  WhileStatement,
+  ForStatement,
 
   VariableDeclaration,
 

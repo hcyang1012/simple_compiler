@@ -43,6 +43,35 @@ void Evaluator::evaluate_variable_declaration(
   last_value_ = std::make_shared<const Value>(value);
 }
 
+void Evaluator::evaluate_if_statement(
+    const std::shared_ptr<const BoundIfStatementNode> statement) {
+  const auto& condition = evaluate_expression(statement->Condition());
+  if(condition.AsBool()) {
+    evaluate_statement(statement->ThenStatement());
+  } else if(statement->ElseStatement() != nullptr) {
+    evaluate_statement(statement->ElseStatement());
+  }
+}
+
+void Evaluator::evaluate_while_statement(
+    const std::shared_ptr<const BoundWhileStatementNode> statement) {
+  while(evaluate_expression(statement->GetCondition()).AsBool()) {
+    evaluate_statement(statement->GetBody());
+  }
+}
+
+void Evaluator::evaluate_for_statement(
+    const std::shared_ptr<const BoundForStatementNode> statement) {
+auto lower_bound = evaluate_expression(statement->LowerBound());
+auto upper_bound = evaluate_expression(statement->UpperBound());
+
+for(auto i = lower_bound.AsInt(); i <= upper_bound.AsInt(); i++) {
+  variables_->insert_or_assign(statement->Variable()->Name(), Value(i));
+  evaluate_statement(statement->Body());
+}
+
+}
+
 void Evaluator::evaluate_statement(
     const std::shared_ptr<const BoundStatementNode> statement) {
   switch (statement->Kind()) {
@@ -57,6 +86,15 @@ void Evaluator::evaluate_statement(
       return evaluate_expression_statement(
           std::static_pointer_cast<const BoundExpressionStatementNode>(
               statement));
+    case BoundNodeKind::BoundIfStatement:
+      return evaluate_if_statement(
+          std::static_pointer_cast<const BoundIfStatementNode>(statement));
+    case BoundNodeKind::BoundWhileStatement:
+      return evaluate_while_statement(
+          std::static_pointer_cast<const BoundWhileStatementNode>(statement));
+    case BoundNodeKind::BoundForStatement:
+      return evaluate_for_statement(
+          std::static_pointer_cast<const BoundForStatementNode>(statement));
   }
   throw std::runtime_error("Unexpected statment: " + statement->Kind());
 }
@@ -123,6 +161,14 @@ Value Evaluator::evaluate_binary_expression(
       return Value(left.Equals(right));
     case BoundBinaryOperatorKind::NotEquals:
       return Value(!left.Equals(right));
+    case BoundBinaryOperatorKind::LessThan:
+      return Value(left.AsInt() < right.AsInt());
+    case BoundBinaryOperatorKind::LessThanOrEquals:
+      return Value(left.AsInt() <= right.AsInt());
+    case BoundBinaryOperatorKind::GreaterThan:
+      return Value(left.AsInt() > right.AsInt());
+    case BoundBinaryOperatorKind::GreaterThanOrEquals:
+      return Value(left.AsInt() >= right.AsInt());
   }
 
   throw std::runtime_error("Unexpected binary operator: " +

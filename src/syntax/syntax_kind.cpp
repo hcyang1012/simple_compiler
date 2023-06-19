@@ -52,6 +52,22 @@ std::string ToString(SyntaxKind kind) {
     return "CloseBraceToken";
   }
 
+  if (kind == SyntaxKind::LessOrEqualsToken) {
+    return "LessOrEqualsToken";
+  }
+
+  if (kind == SyntaxKind::LessToken) {
+    return "LessToken";
+  }
+
+  if (kind == SyntaxKind::GreaterOrEqualsToken) {
+    return "GreaterOrEqualsToken";
+  }
+
+  if (kind == SyntaxKind::GreaterToken) {
+    return "GreaterToken";
+  }
+
   if (kind == SyntaxKind::UnaryExpression) {
     return "UnaryExpression";
   }
@@ -134,6 +150,43 @@ std::string ToString(SyntaxKind kind) {
   if (kind == SyntaxKind::VariableDeclaration) {
     return "VariableDeclaration";
   }
+
+  if (kind == IfKeyword) {
+    return "IfKeyword";
+  }
+
+  if (kind == SyntaxKind::ElseKeyword) {
+    return "ElseKeyword";
+  }
+
+  if (kind == SyntaxKind::ElaseClause) {
+    return "ElaseClause";
+  }
+
+  if (kind == SyntaxKind::IfStatement) {
+    return "IfStatement";
+  }
+
+  if (kind == SyntaxKind::WhileKeyword) {
+    return "WhileKeyword";
+  }
+
+  if (kind == SyntaxKind::WhileStatement) {
+    return "WhileStatement";
+  }
+
+  if (kind == SyntaxKind::ForKeyword) {
+    return "ForKeyword";
+  }
+
+  if (kind == SyntaxKind::ToKeyword) {
+    return "ToKeyword";
+  }
+
+  if(kind == SyntaxKind::ForStatement){
+    return "ForStatement";
+  }
+
 
   return "BadToken";
 }
